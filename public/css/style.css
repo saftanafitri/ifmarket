@@ -1,0 +1,157 @@
+.bg-custom {
+  background-color: #f8d219;
+}
+.bg-custom1 {
+  background-color: #f9f8db;
+}
+h1 span {
+  font-size: 1.5rem; /* Ubah ukuran font sesuai kebutuhan */
+  font-weight: bold; /* Membuat teks lebih tebal */
+  color: #000; /* Warna teks */
+  text-align: left;
+}
+body {
+  background-color: #f9f8db;
+}
+.search-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-btn img {
+  width: 20px;
+  height: 20px;
+}
+.list-unstyled li a {
+  color: #000; 
+  text-decoration: none; 
+}
+.list-unstyled li a:hover {
+  color: #f9f8db; 
+}
+.card{
+  background-color: #f8d219;
+  border-radius: 0;
+}
+.card-img-top {
+  border-top-left-radius: 0; /* Pastikan gambar juga tidak melengkung */
+  border-top-right-radius: 0;
+}
+.dropdown-menu{
+  background-color: #f8d219;
+}
+
+.custom-btn {
+  height: 60px;
+  background-color:  #f9f8db; 
+  color: #000;
+  border: 2px solid #f8d219; 
+  font-size: 1.2rem; 
+  border-radius: 10px; 
+  transition: all 0.3s ease; 
+}
+.custom-btn:hover {
+  background-color:#f8d219; 
+  color:  #f9f8db; 
+  border: 2px solid  #f9f8db; 
+  outline: none; 
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.table-custom td { 
+  background-color: #f8d219;
+  color: #000; 
+}
+.table-custom th {
+  background-color: #f8d219;
+  color: #000; 
+}
+
+@media (max-width: 768px) {
+  h1 span, h2 {
+    font-size: 1.2rem; /* Ukuran lebih kecil */
+  }
+
+  .card {
+    margin-bottom: 20px; /* Tambahkan jarak antar kartu */
+  }
+
+  .dropdown-menu {
+    font-size: 0.9rem; /* Font lebih kecil */
+  }
+
+  .search-btn {
+    width: 100%; /* Tombol penuh untuk layar kecil */
+    justify-content: center;
+  }
+}
+
+/* Tombol Sort Default */
+.sort-btn {
+  background-color: transparent; /* Transparan saat tidak di-hover */
+  color: #000; /* Warna teks kuning */
+  border: 2px solid transparent; /* Outline kuning */
+  padding: 5px 15px; /* Ruang di dalam tombol */
+  border-radius: 5px; /* Sudut melengkung */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s; /* Animasi perubahan */
+}
+
+/* Hover State */
+.sort-btn:hover {
+  background-color: #f8d219; /* Warna kuning solid saat di-hover */
+  border: 2px solid transparent; /* Outline kuning */
+  color: #000; /* Warna teks putih */
+}
+
+/* Aktif State */
+.sort-btn.active {
+  background-color: #f8d219; /* Warna kuning solid */
+  border: 2px solid transparent; /* Outline kuning */
+  color: #000; /* Warna teks putih */
+}
+
+.product {
+  display: block; /* Pastikan produk tampil secara default */
+}
+
+.image-gallery {
+  max-width: 500px; /* Sesuaikan dengan lebar gambar utama */
+  margin: 0 auto; /* Tengah-kan galeri */
+}
+
+.image-gallery img {
+  width: 100%; /* Gambar kecil mengikuti lebar kolom */
+  cursor: pointer;
+}
+
+.img-thumbnail {
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
+.img-thumbnail:hover {
+  transform: scale(1.1);
+}
+
+/* Styling untuk tombol Lihat Produk */
+.btn-custom {
+  background-color: transparent;
+  color: #000;
+  border: 2px solid #ffcc00;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #ffcc00; /* Warna kuning lebih gelap pada hover */
+}
