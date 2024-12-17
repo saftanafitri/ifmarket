@@ -28,11 +28,11 @@ body {
   height: 20px;
 }
 .list-unstyled li a {
-  color: #000; 
-  text-decoration: none; 
+  color: #000;
+  text-decoration: none;
 }
 .list-unstyled li a:hover {
-  color: #f9f8db; 
+  color: #f9f8db;
 }
 .card{
   background-color: #f8d219;
@@ -48,28 +48,28 @@ body {
 
 .custom-btn {
   height: 60px;
-  background-color:  #f9f8db; 
+  background-color:  #f9f8db;
   color: #000;
-  border: 2px solid #f8d219; 
-  font-size: 1.2rem; 
-  border-radius: 10px; 
-  transition: all 0.3s ease; 
+  border: 2px solid #f8d219;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 .custom-btn:hover {
-  background-color:#f8d219; 
-  color:  #f9f8db; 
-  border: 2px solid  #f9f8db; 
-  outline: none; 
+  background-color:#f8d219;
+  color:  #f9f8db;
+  border: 2px solid  #f9f8db;
+  outline: none;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-.table-custom td { 
+.table-custom td {
   background-color: #f8d219;
-  color: #000; 
+  color: #000;
 }
 .table-custom th {
   background-color: #f8d219;
-  color: #000; 
+  color: #000;
 }
 
 @media (max-width: 768px) {

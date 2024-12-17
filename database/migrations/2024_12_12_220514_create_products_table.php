@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->json('photos')->nullable(); // Kolom JSON untuk path foto
-            $table->string('video')->nullable(); // Kolom untuk path video
+            $table->string('name'); // Product name
+            $table->json('photos')->nullable(); // JSON column for multiple photo paths
+            $table->string('video')->nullable(); // String column for a single video path
+            $table->string('category'); // Product category
+            $table->text('description'); // Product description
+            $table->string('seller_name'); // Seller name
+            $table->string('email'); // Seller email
+            $table->string('instagram')->nullable(); // Instagram link (nullable)
+            $table->string('linkedin')->nullable(); // LinkedIn link (nullable)
+            $table->string('github')->nullable(); // GitHub link (nullable)
+            $table->string('product_link'); // Product link (required)
             $table->timestamps();
         });
-
     }
 
     /**

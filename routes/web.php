@@ -18,6 +18,9 @@ Route::post('/products', [ProductController::class, 'store'])->name('products.st
 // Menampilkan detail produk berdasarkan ID
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
+Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+
+
 /*
 |--------------------------------------------------------------------------
 | Home & Static Pages

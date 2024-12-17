@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -13,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Ambil semua data produk dan kirim ke view
+        // Retrieve all products and send them to the view
         $products = Product::all();
         return view('products.index', compact('products'));
     }
@@ -23,8 +25,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // Jika tidak ada produk, Anda bisa mengirimkan data kosong atau null
-        return view('products.create', ['product' => null]);
+        $product = null; // No product since this is a new creation form
+        return view('products.create', compact('product'));
     }
 
     /**
@@ -32,15 +34,14 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        // Validasi data
+        // Validate data
         $request->validate([
             'name' => 'required|string|max:255',
             'productPhotos' => 'nullable|array|max:9',
-            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'productVideo' => 'nullable|file|mimes:mp4,mov,avi,wmv|max:102400', // Maksimum 100MB
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
         ]);
 
-        // Menyimpan foto produk
+        // Store product photos
         $photoPaths = [];
         if ($request->hasFile('productPhotos')) {
             foreach ($request->file('productPhotos') as $file) {
@@ -48,17 +49,10 @@ class ProductController extends Controller
             }
         }
 
-        // Menyimpan video produk
-        $videoPath = null;
-        if ($request->hasFile('productVideo')) {
-            $videoPath = $request->file('productVideo')->store('products/videos', 'public');
-        }
-
-        // Simpan data produk ke database
+        // Save product data to the database
         Product::create([
             'name' => $request->input('name'),
-            'photos' => $photoPaths, // Menyimpan path foto (array)
-            'video' => $videoPath,  // Menyimpan path video
+            'photos' => json_encode($photoPaths), // Storing photo paths as JSON
         ]);
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
@@ -69,10 +63,10 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        // Ambil data produk berdasarkan ID
+        // Retrieve product by ID
         $product = Product::findOrFail($id);
 
-        // Kirim data ke view
+        // Send data to the view
         return view('products.show', compact('product'));
     }
 
@@ -81,24 +75,67 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::findOrFail($id); // Ambil produk berdasarkan ID
+        // Retrieve the product by ID
+        $product = Product::findOrFail($id);
         return view('products.edit', compact('product'));
     }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, $id)
     {
-        // Validasi dan pembaruan data produk akan ditambahkan di sini
+        // Find the product by ID
+        $product = Product::findOrFail($id);
+
+        // Validate data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'productPhotos' => 'nullable|array|max:9',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
+        ]);
+
+        // Update product photos
+        $photoPaths = json_decode($product->photos, true) ?: [];
+        if ($request->hasFile('productPhotos')) {
+            // Delete old photos (optional)
+            foreach ($photoPaths as $photo) {
+                Storage::disk('public')->delete($photo);
+            }
+
+            // Store new photos
+            $photoPaths = [];
+            foreach ($request->file('productPhotos') as $file) {
+                $photoPaths[] = $file->store('products/photos', 'public');
+            }
+        }
+
+        // Update product data
+        $product->update([
+            'name' => $request->input('name'),
+            'photos' => json_encode($photoPaths), // Update photos path as JSON
+        ]);
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        // Hapus data produk
+        // Find the product by ID
+        $product = Product::findOrFail($id);
+
+        // Delete associated photos
+        $photoPaths = json_decode($product->photos, true) ?: [];
+        foreach ($photoPaths as $photo) {
+            Storage::disk('public')->delete($photo);
+        }
+
+        // Delete the product
         $product->delete();
+
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
 }
