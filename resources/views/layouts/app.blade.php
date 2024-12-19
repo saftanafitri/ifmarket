@@ -42,17 +42,17 @@
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                     @if(Route::currentRouteName() == 'index')
-                    <li><a class="dropdown-item" href="{{ route('addProduct') }}">Add Products</a></li>
+                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                     <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
                     @elseif (Route::currentRouteName() == 'addProduct')
                     <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
                     <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
                     @elseif (Route::currentRouteName() == 'manageProduct')
                     <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
-                    <li><a class="dropdown-item" href="{{ route('addProduct') }}">Add Products</a></li>
+                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                     @elseif (Route::currentRouteName() == 'detail')
                     <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
-                    <li><a class="dropdown-item" href="{{ route('addProduct') }}">Add Products</a></li>
+                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                     <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
                     @else
                     <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>

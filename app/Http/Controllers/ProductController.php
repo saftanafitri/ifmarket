@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +15,7 @@ class ProductController extends Controller
     {
         // Retrieve all products and send them to the view
         $products = Product::all();
-        return view('products.index', compact('products'));
+        return view('home.index', compact('products'));
     }
 
     /**
@@ -25,37 +23,15 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $product = null; // No product since this is a new creation form
-        return view('products.create', compact('product'));
+        return view('addProduct.index');
     }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
-        // Validate data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'productPhotos' => 'nullable|array|max:9',
-            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
-        ]);
-
-        // Store product photos
-        $photoPaths = [];
-        if ($request->hasFile('productPhotos')) {
-            foreach ($request->file('productPhotos') as $file) {
-                $photoPaths[] = $file->store('products/photos', 'public');
-            }
-        }
-
-        // Save product data to the database
-        Product::create([
-            'name' => $request->input('name'),
-            'photos' => json_encode($photoPaths), // Storing photo paths as JSON
-        ]);
-
-        return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
+        dd($request);
+        return 'ok';
     }
 
     /**
@@ -83,7 +59,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, $id)
+    public function update(Request $request, $id)
     {
         // Find the product by ID
         $product = Product::findOrFail($id);

@@ -16,10 +16,13 @@
                     <div id="photoPreview" class="d-flex mb-3" style="gap: 10px;"></div>
 
                     <!-- Add Photo button -->
-                    <div id="addPhotoBox" class="border border-warning rounded text-center py-3" style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-                        <input type="file" id="productPhotos" name="productPhotos[]" class="form-control d-none" multiple accept="image/*" required>
+                    <div id="addPhotoBox" class="border border-warning rounded text-center py-3"
+                        style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
+                        <input type="file" id="productPhotos" name="productPhotos[]" class="form-control d-none" multiple
+                            accept="image/*" required>
                         <span id="photoLabel" style="font-size: 24px; color: black; position: absolute; top: 10px;">+</span>
-                        <span id="photoLabelText" style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/9</span>
+                        <span id="photoLabelText"
+                            style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/9</span>
                     </div>
                 </div>
             </div>
@@ -28,11 +31,16 @@
                 let existingPhotos = []; // To keep track of already uploaded photos
 
                 // Handle the photo input click
-                document.querySelector('#addPhotoBox').addEventListener('click', function() {
-                    document.getElementById('productPhotos').click();
+                document.querySelector('#addPhotoBox')?.addEventListener('click', function() {
+                    const photoInput = document.getElementById('productPhotos');
+                    if (photoInput) {
+                        photoInput.click();
+                    } else {
+                        console.error('Photo input element not found.');
+                    }
                 });
 
-                document.getElementById('productPhotos').addEventListener('change', function () {
+                document.getElementById('productPhotos').addEventListener('change', function() {
                     const totalFileCount = document.querySelectorAll('#photoPreview img').length + this.files.length;
                     const label = document.getElementById('photoLabelText');
 
@@ -43,26 +51,23 @@
 
                     label.textContent = `${totalFileCount}/9`;
 
-                    // Check if there are already 9 photos
                     if (totalFileCount === 9) {
-                        document.getElementById('addPhotoBox').style.display = 'none'; // Hide the add button
+                        document.getElementById('addPhotoBox').hidden = true; // Hide the add button
                     }
 
                     // Loop through the selected files and create image previews
                     const photoPreview = document.getElementById('photoPreview');
-                    const files = Array.from(this.files);
-                    files.forEach((file, index) => {
-                        if (index >= 9 - document.querySelectorAll('#photoPreview img').length) return; // Only process up to available slots
-
+                    const files = Array.from(this.files).slice(0, 9 - document.querySelectorAll('#photoPreview img').length);
+                    files.forEach(file => {
                         const reader = new FileReader();
-                        reader.onload = function (e) {
+                        reader.onload = ({ target }) => {
                             const photoWrapper = document.createElement('div');
                             photoWrapper.style.position = 'relative';
                             photoWrapper.style.display = 'inline-block';
                             photoWrapper.style.marginRight = '10px';
 
                             const img = document.createElement('img');
-                            img.src = e.target.result;
+                            img.src = target.result;
                             img.style.width = '100px';
                             img.style.height = '100px';
                             img.style.objectFit = 'cover';
@@ -80,10 +85,10 @@
                             trashIcon.style.cursor = 'pointer';
                             trashIcon.style.padding = '5px';
 
-                            trashIcon.addEventListener('click', function () {
+                            trashIcon.addEventListener('click', function() {
                                 // Remove the photo from the preview and reset input
                                 photoWrapper.remove();
-                                updateFileCount();
+                                label.textContent = `${document.querySelectorAll('#photoPreview img').length}/9`;
                             });
 
                             // Append image and trash icon to the wrapper
@@ -98,40 +103,43 @@
                     this.value = '';
                 });
 
-                function updateFileCount() {
-                    const totalPhotos = document.querySelectorAll('#photoPreview img').length;
-                    const label = document.getElementById('photoLabelText');
-                    label.textContent = `${totalPhotos}/9`;
+                // function updateFileCount() {
+                //     const totalPhotos = document.querySelectorAll('#photoPreview img').length;
+                //     const label = document.getElementById('photoLabelText');
+                //     label.textContent = `${totalPhotos}/9`;
 
-                    // Show the Add Photo button if there are fewer than 9 photos
-                    if (totalPhotos < 9) {
-                        document.getElementById('addPhotoBox').style.display = 'flex';
-                    } else {
-                        document.getElementById('addPhotoBox').style.display = 'none'; // Hide if 9 photos are reached
-                    }
-                }
+                //     // Show the Add Photo button if there are fewer than 9 photos
+                //     if (totalPhotos < 9) {
+                //         document.getElementById('addPhotoBox').style.display = 'flex';
+                //     } else {
+                //         document.getElementById('addPhotoBox').style.display = 'none'; // Hide if 9 photos are reached
+                //     }
+                // }
             </script>
 
-                <label for="productVideos" class="form-label">
-                    Video Produk <span class="text-danger">*</span>
-                </label>
+            <label for="productVideos" class="form-label">
+                Video Produk <span class="text-danger">*</span>
+            </label>
             <!-- Video Upload Section -->
             <div id="videoSection">
-                <div id="addVideoBox" class="border border-warning rounded text-center py-3" style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-                    <input type="file" id="productVideo" name="productVideo" class="form-control d-none" accept="video/*">
+                <div id="addVideoBox" class="border border-warning rounded text-center py-3"
+                    style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
+                    <input type="file" id="productVideo" name="productVideo" class="form-control d-none"
+                        accept="video/*">
                     <span id="videoLabel" style="font-size: 24px; color: black; position: absolute; top: 10px;">+</span>
-                    <span id="videoLabelText" style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/1</span>
+                    <span id="videoLabelText"
+                        style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/1</span>
                 </div>
                 <div id="videoPreview" class="mt-3"></div>
             </div>
 
             <script>
                 // Video Upload Logic
-                document.getElementById('addVideoBox').addEventListener('click', function () {
+                document.getElementById('addVideoBox').addEventListener('click', function() {
                     document.getElementById('productVideo').click();
                 });
 
-                document.getElementById('productVideo').addEventListener('change', function () {
+                document.getElementById('productVideo').addEventListener('change', function() {
                     const videoFile = this.files[0];
                     const label = document.getElementById('videoLabelText');
 
@@ -161,7 +169,7 @@
                         videoElement.style.objectFit = 'cover';
 
                         const reader = new FileReader();
-                        reader.onload = function (e) {
+                        reader.onload = function(e) {
                             videoElement.src = e.target.result;
                         };
                         reader.readAsDataURL(videoFile);
@@ -179,9 +187,10 @@
                         trashIcon.style.padding = '5px';
 
                         // Event to remove video
-                        trashIcon.addEventListener('click', function () {
+                        trashIcon.addEventListener('click', function() {
                             videoWrapper.remove();
-                            document.getElementById('addVideoBox').style.display = 'flex'; // Show add video button again
+                            document.getElementById('addVideoBox').style.display =
+                            'flex'; // Show add video button again
                             label.textContent = '0/1';
                             document.getElementById('productVideo').value = ''; // Reset input file
                         });
@@ -196,25 +205,13 @@
 
             <div class="mb-3">
                 <label class="form-label" for="name">Nama Produk <span class="text-danger">*</span></label>
-                <input
-                    type="text"
-                    class="form-control border-warning"
-                    id="name"
-                    name="name"
-                    placeholder="Input"
-                    value="{{ old('name') }}"
-                    required
-                >
+                <input type="text" class="form-control border-warning" id="name" name="name" placeholder="Input"
+                    value="{{ old('name') }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="category">Kategori Produk <span class="text-danger">*</span></label>
-                <select
-                    class="form-select border-warning"
-                    id="category"
-                    name="category"
-                    required
-                >
+                <select class="form-select border-warning" id="category" name="category" required>
                     <option value="">Pilih kategori</option>
                     <option value="Kerja Praktik (KP)">Kerja Praktik (KP)</option>
                     <option value="Tugas Akhir (TA)">Tugas Akhir (TA)</option>
@@ -226,83 +223,38 @@
 
             <div class="mb-3">
                 <label class="form-label" for="description">Deskripsi Produk <span class="text-danger">*</span></label>
-                <textarea
-                    class="form-control border-warning"
-                    id="description"
-                    name="description"
-                    rows="3"
-                    placeholder="Input"
-                    required
-                >{{ old('description') }}</textarea>
+                <textarea class="form-control border-warning" id="description" name="description" rows="3" placeholder="Input"
+                    required>{{ old('description') }}</textarea>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="seller_name">Nama Penjual <span class="text-danger">*</span></label>
-                <input
-                    type="text"
-                    class="form-control border-warning"
-                    id="seller_name"
-                    name="seller_name"
-                    placeholder="Input"
-                    value="{{ old('seller_name') }}"
-                    required
-                >
+                <input type="text" class="form-control border-warning" id="seller_name" name="seller_name"
+                    placeholder="Input" value="{{ old('seller_name') }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
-                <input
-                    type="email"
-                    class="form-control border-warning"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    value="{{ old('email') }}"
-                    required
-                >
+                <input type="email" class="form-control border-warning" id="email" name="email" placeholder="Email"
+                    value="{{ old('email') }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="socialMedia" class="form-label">Media Sosial</label>
-                <input
-                    type="url"
-                    class="form-control border-warning mb-2"
-                    id="instagram"
-                    name="instagram"
-                    placeholder="Link Instagram"
-                    value="{{ old('instagram') }}"
-                >
-                <input
-                    type="url"
-                    class="form-control border-warning mb-2"
-                    id="linkedin"
-                    name="linkedin"
-                    placeholder="Link LinkedIn"
-                    value="{{ old('linkedin') }}"
-                >
-                <input
-                    type="url"
-                    class="form-control border-warning"
-                    id="github"
-                    name="github"
-                    placeholder="Link GitHub"
-                    value="{{ old('github') }}"
-                >
+                <input type="url" class="form-control border-warning mb-2" id="instagram" name="instagram"
+                    placeholder="Link Instagram" value="{{ old('instagram') }}">
+                <input type="url" class="form-control border-warning mb-2" id="linkedin" name="linkedin"
+                    placeholder="Link LinkedIn" value="{{ old('linkedin') }}">
+                <input type="url" class="form-control border-warning" id="github" name="github"
+                    placeholder="Link GitHub" value="{{ old('github') }}">
             </div>
 
             <div class="mb-3">
                 <label for="productLink" class="form-label">
                     Link Produk<span class="text-danger">*</span>
                 </label>
-                <input
-                    type="url"
-                    class="form-control border-warning"
-                    id="productLink"
-                    name="productLink"
-                    placeholder="Dapat berupa prototipe atau produk jadi"
-                    value="{{ old('productLink') }}"
-                    required
-                >
+                <input type="url" class="form-control border-warning" id="productLink" name="productLink"
+                    placeholder="Dapat berupa prototipe atau produk jadi" value="{{ old('productLink') }}" required>
                 <small id="productLinkHelp" class="form-text text-muted">
                     Masukkan URL yang valid untuk produk Anda, baik berupa prototipe maupun produk jadi.
                 </small>

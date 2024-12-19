@@ -3,22 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
-/*
-|--------------------------------------------------------------------------
-| Routes for Product Management
-|--------------------------------------------------------------------------
-*/
-
 // Halaman untuk membuat produk baru
-Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+// Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
 
-// Menyimpan produk baru
-Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+// // Menyimpan produk baru
+// Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 
-// Menampilkan detail produk berdasarkan ID
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+// // Menampilkan detail produk berdasarkan ID
+// Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
-Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+// Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
 
 
 /*
@@ -62,18 +56,14 @@ Route::prefix('auth')->group(function () {
     })->name('register.submit');
 });
 
+
 /*
 |--------------------------------------------------------------------------
-| Additional Routes for Product Management
+| Routes for Product Management
 |--------------------------------------------------------------------------
 */
 
-// Menambahkan produk (form add product)
-Route::get('/product/add', function () {
-    return view('addProduct.index');
-})->name('addProduct');
-
-// Mengelola produk
 Route::get('/product/manage', function () {
     return view('manageProduct.index');
 })->name('manageProduct');
+Route::resource('products', ProductController::class);
