@@ -16,99 +16,100 @@
                     <div id="photoPreview" class="d-flex mb-3" style="gap: 10px;"></div>
 
                     <!-- Add Photo button -->
-                    <div id="addPhotoBox" class="border border-warning rounded text-center py-3"
-                        style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-                        <input type="file" id="productPhotos" name="productPhotos[]" class="form-control d-none" multiple
-                            accept="image/*" required>
-                        <span id="photoLabel" style="font-size: 24px; color: black; position: absolute; top: 10px;">+</span>
-                        <span id="photoLabelText"
-                            style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/9</span>
-                    </div>
+                    <input type="file" id="productPhotos" name="productPhotos[]" class="form-control" multiple
+                        accept="image/*" required>
+                        <!-- <div id="addPhotoBox" class="border border-warning rounded text-center py-3"
+                            style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
+                            <input type="file" id="productPhotos" name="productPhotos[]" class="form-control" multiple
+                                accept="image/*" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;">
+                            <span id="photoLabel" style="font-size: 24px; color: black; position: absolute; top: 10px;">+</span>
+                            <span id="photoLabelText" style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/9</span>
+                        </div> -->
                 </div>
             </div>
 
             <script>
-                let existingPhotos = []; // To keep track of already uploaded photos
+                // let existingPhotos = []; // To keep track of already uploaded photos
 
-                // Handle the photo input click
-                document.querySelector('#addPhotoBox')?.addEventListener('click', function() {
-                    const photoInput = document.getElementById('productPhotos');
-                    if (photoInput) {
-                        photoInput.click();
-                    } else {
-                        console.error('Photo input element not found.');
-                    }
-                });
+                // // Handle the photo input click
+                // document.querySelector('#addPhotoBox')?.addEventListener('click', function() {
+                //     const photoInput = document.getElementById('productPhotos');
+                //     if (photoInput) {
+                //         photoInput.click();
+                //     } else {
+                //         console.error('Photo input element not found.');
+                //     }
+                // });
 
-                document.getElementById('productPhotos').addEventListener('change', function() {
-                    const totalFileCount = document.querySelectorAll('#photoPreview img').length + this.files.length;
-                    const label = document.getElementById('photoLabelText');
+                // document.getElementById('productPhotos').addEventListener('change', function() {
+                //     const totalFileCount = document.querySelectorAll('#photoPreview img').length + this.files.length;
+                //     const label = document.getElementById('photoLabelText');
 
-                    if (totalFileCount > 9) {
-                        alert('You can only upload up to 9 photos.');
-                        return;
-                    }
+                //     if (totalFileCount > 9) {
+                //         alert('You can only upload up to 9 photos.');
+                //         return;
+                //     }
 
-                    label.textContent = `${totalFileCount}/9`;
+                //     label.textContent = `${totalFileCount}/9`;
 
-                    if (totalFileCount === 9) {
-                        document.getElementById('addPhotoBox').hidden = true; // Hide the add button
-                    }
+                //     if (totalFileCount === 9) {
+                //         document.getElementById('addPhotoBox').hidden = true; // Hide the add button
+                //     }
 
-                    // Loop through the selected files and create image previews
-                    const photoPreview = document.getElementById('photoPreview');
-                    const files = Array.from(this.files).slice(0, 9 - document.querySelectorAll('#photoPreview img').length);
-                    files.forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = ({ target }) => {
-                            const photoWrapper = document.createElement('div');
-                            photoWrapper.style.position = 'relative';
-                            photoWrapper.style.display = 'inline-block';
-                            photoWrapper.style.marginRight = '10px';
+                //     // Loop through the selected files and create image previews
+                //     const photoPreview = document.getElementById('photoPreview');
+                //     const files = Array.from(this.files).slice(0, 9 - document.querySelectorAll('#photoPreview img').length);
+                //     files.forEach(file => {
+                //         const reader = new FileReader();
+                //         reader.onload = ({ target }) => {
+                //             const photoWrapper = document.createElement('div');
+                //             photoWrapper.style.position = 'relative';
+                //             photoWrapper.style.display = 'inline-block';
+                //             photoWrapper.style.marginRight = '10px';
 
-                            const img = document.createElement('img');
-                            img.src = target.result;
-                            img.style.width = '100px';
-                            img.style.height = '100px';
-                            img.style.objectFit = 'cover';
-                            img.classList.add('rounded');
+                //             const img = document.createElement('img');
+                //             img.src = target.result;
+                //             img.style.width = '100px';
+                //             img.style.height = '100px';
+                //             img.style.objectFit = 'cover';
+                //             img.classList.add('rounded');
 
-                            // Create trash icon and append to the image
-                            const trashIcon = document.createElement('i');
-                            trashIcon.classList.add('fa', 'fa-trash');
-                            trashIcon.style.position = 'absolute';
-                            trashIcon.style.top = '5px';
-                            trashIcon.style.right = '5px';
-                            trashIcon.style.color = 'white';
-                            trashIcon.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                            trashIcon.style.borderRadius = '50%';
-                            trashIcon.style.cursor = 'pointer';
-                            trashIcon.style.padding = '5px';
+                //             // Create trash icon and append to the image
+                //             const trashIcon = document.createElement('i');
+                //             trashIcon.classList.add('fa', 'fa-trash');
+                //             trashIcon.style.position = 'absolute';
+                //             trashIcon.style.top = '5px';
+                //             trashIcon.style.right = '5px';
+                //             trashIcon.style.color = 'white';
+                //             trashIcon.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                //             trashIcon.style.borderRadius = '50%';
+                //             trashIcon.style.cursor = 'pointer';
+                //             trashIcon.style.padding = '5px';
 
-                            trashIcon.addEventListener('click', function() {
-                                // Remove the photo from the preview and reset input
-                                photoWrapper.remove();
-                                label.textContent = `${document.querySelectorAll('#photoPreview img').length}/9`;
-                            });
+                //             trashIcon.addEventListener('click', function() {
+                //                 // Remove the photo from the preview and reset input
+                //                 photoWrapper.remove();
+                //                 label.textContent = `${document.querySelectorAll('#photoPreview img').length}/9`;
+                //             });
 
-                            // Append image and trash icon to the wrapper
-                            photoWrapper.appendChild(img);
-                            photoWrapper.appendChild(trashIcon);
-                            photoPreview.appendChild(photoWrapper);
-                        };
-                        reader.readAsDataURL(file);
-                    });
+                //             // Append image and trash icon to the wrapper
+                //             photoWrapper.appendChild(img);
+                //             photoWrapper.appendChild(trashIcon);
+                //             photoPreview.appendChild(photoWrapper);
+                //         };
+                //         reader.readAsDataURL(file);
+                //     });
 
-                    // Reset the file input so user can add more photos
-                    this.value = '';
-                });
+                //     // Reset the file input so user can add more photos
+                //     this.value = '';
+                // });
 
                 // function updateFileCount() {
                 //     const totalPhotos = document.querySelectorAll('#photoPreview img').length;
                 //     const label = document.getElementById('photoLabelText');
                 //     label.textContent = `${totalPhotos}/9`;
 
-                //     // Show the Add Photo button if there are fewer than 9 photos
+                //     // Show the Add Photo button sif there are fewer than 9 photos
                 //     if (totalPhotos < 9) {
                 //         document.getElementById('addPhotoBox').style.display = 'flex';
                 //     } else {
@@ -190,7 +191,7 @@
                         trashIcon.addEventListener('click', function() {
                             videoWrapper.remove();
                             document.getElementById('addVideoBox').style.display =
-                            'flex'; // Show add video button again
+                                'flex'; // Show add video button again
                             label.textContent = '0/1';
                             document.getElementById('productVideo').value = ''; // Reset input file
                         });
@@ -210,14 +211,14 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="category">Kategori Produk <span class="text-danger">*</span></label>
-                <select class="form-select border-warning" id="category" name="category" required>
+                <label class="form-label" for="category_id">Kategori Produk <span class="text-danger">*</span></label>
+                <select class="form-select border-warning" id="category_id" name="category_id" required>
                     <option value="">Pilih kategori</option>
-                    <option value="Kerja Praktik (KP)">Kerja Praktik (KP)</option>
-                    <option value="Tugas Akhir (TA)">Tugas Akhir (TA)</option>
-                    <option value="Penelitian">Penelitian</option>
-                    <option value="Pengabdian pada Masyarakat">Pengabdian pada Masyarakat</option>
-                    <option value="Tugas Kuliah">Tugas Kuliah</option>
+                    @foreach ($categories as $items)
+                        <option value="{{ $items->id }}" {{ isset($items->id) || old('id') ? 'selected' : '' }}>
+                            {{ $items->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -235,8 +236,8 @@
 
             <div class="mb-3">
                 <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
-                <input type="email" class="form-control border-warning" id="email" name="email" placeholder="Email"
-                    value="{{ old('email') }}" required>
+                <input type="email" class="form-control border-warning" id="email" name="email"
+                    placeholder="Email" value="{{ old('email') }}" required>
             </div>
 
             <div class="mb-3">

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Photo;
+
 
 class ProductController extends Controller
 {
@@ -23,16 +27,100 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('addProduct.index');
+        $categories = DB::table('categories')->get();
+        return view('addProduct.index', compact('categories'));
     }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        dd($request);
-        return 'ok';
+        // dd($request);
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string|max:255',
+        //     'category' => 'required|string',
+        //     'description' => 'required|string',
+        //     'seller_name' => 'required|string',
+        //     'email' => 'required|string',
+        //     'productLink' => 'required|string'
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+
+        // Menyimpan produk
+        $product = Product::create([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'seller_name' => $request->seller_name,
+            'email' => $request->email,
+            'instagram' => $request->instagram,
+            'linkedin' => $request->linkedin,
+            'github' => $request->github,
+            'product_link' => $request->productLink
+
+
+        ]);
+        // id => identitas
+        // simpan video dan foto
+        // simapn video berhasil maka update table product berdasarkan $product->id
+
+        // foto productPhotos
+        // video productVideo
+        // Menyimpan gambar-gambar produk
+        // if ($request->hasFile('images')) {
+        //     foreach ($request->file('images') as $image) {
+        //         $path = $image->store('product_images', 'public');  // Menyimpan gambar ke folder 'storage/app/public/product_images'
+
+        //         Photo::create([
+        //             'product_id' => $product->id,
+        //             'image_path' => $path,
+        //         ]);
+        //     }
+        // }
+        return redirect()->route('index')->with('success', 'Product created successfully');
     }
+
+    /*public function store(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id', // Validate category
+            'description' => 'required|string',
+            'seller_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate product photos
+        ]);
+
+        // Store product data in the products table
+        $product = Product::create([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'seller_name' => $request->seller_name,
+            'email' => $request->email,
+        ]);
+
+        // Process the uploaded product photos
+        if ($request->hasFile('productPhotos')) {
+            foreach ($request->file('productPhotos') as $file) {
+                // Store the file and get the file path
+                $path = $file->store('products/photos', 'public');
+
+                // Create a new photo entry in the photos table
+                Photo::create([
+                    'url' => $path,
+                    'product_id' => $product->id, // Link photo to the product
+                ]);
+            }
+        }
+
+        // Redirect back with a success message
+        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+    }*/
 
     /**
      * Display the specified resource.

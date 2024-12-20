@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('photos', function (Blueprint $table) {
-            $table->id();
-            $table->string('url');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            // add foreign key
+            $table->foreign('category_id')->references('id')->on('categories');
         });
     }
 
@@ -24,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('photos');
+        Schema::table('products', function (Blueprint $table) {
+
+        });
     }
 };

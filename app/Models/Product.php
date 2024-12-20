@@ -13,23 +13,28 @@ class Product extends Model
         'name',
         'photos',
         'video',
-        'category',
         'description',
         'seller_name',
         'email',
         'instagram',
         'linkedin',
         'github',
-        'product_link'
+        'product_link',
+        'category_id'
     ];
 
-    protected $casts = [
-        'photos' => 'array',
-    ];
+    // protected $casts = [
+    //     'photos' => 'array',
+    // ];
 
     public function photos()
     {
         return $this->hasMany(Photo::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
 
