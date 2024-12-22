@@ -23,9 +23,6 @@ class Product extends Model
         'category_id'
     ];
 
-    // protected $casts = [
-    //     'photos' => 'array',
-    // ];
 
     public function photos()
     {
@@ -35,6 +32,6 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
+    }  
 }
 

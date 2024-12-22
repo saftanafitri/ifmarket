@@ -2,18 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-
-// Halaman untuk membuat produk baru
-// Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-
-// // Menyimpan produk baru
-// Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-
-// // Menampilkan detail produk berdasarkan ID
-// Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-
-// Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-
+use App\Http\Controllers\PhotoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,12 +12,12 @@ use App\Http\Controllers\ProductController;
 
 // Beranda
 Route::get('/', function () {
-    return view('home.index');
+    return view('home');
 })->name('index');
 
 // Halaman detail (contoh untuk produk atau informasi lainnya)
 Route::get('/detail', function () {
-    return view('details.index');
+    return view('details');
 })->name('detail');
 
 /*
@@ -56,10 +45,37 @@ Route::prefix('auth')->group(function () {
     })->name('register.submit');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Routes for Product Management (Video)
+|--------------------------------------------------------------------------
+*/
+
+Route::resource('products', ProductController::class)->except(['edit']); // CRUD untuk produk (video)
 
 /*
 |--------------------------------------------------------------------------
-| Routes for Product Management
+| Routes for Photo Management (Foto)
+|--------------------------------------------------------------------------
+*/
+
+// Tampilkan semua foto untuk produk tertentu
+//Route::get('products/{productId}/photos', [PhotoController::class, 'index'])->name('photos.index');
+
+// Tambahkan foto untuk produk tertentu
+//Route::post('products/{productId}/photos', [PhotoController::class, 'store'])->name('photos.store');
+
+// Perbarui foto
+//Route::patch('photos/{id}', [PhotoController::class, 'update'])->name('photos.update');
+
+// Hapus foto
+//Route::delete('photos/{id}', [PhotoController::class, 'destroy'])->name('photos.destroy');
+//Route::get('/add-product', [ProductController::class, 'create'])->name('products.create');
+
+
+/*
+|--------------------------------------------------------------------------
+| Manage Products Page (Optional)
 |--------------------------------------------------------------------------
 */
 
