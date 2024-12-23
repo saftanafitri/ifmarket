@@ -3,35 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Models\Photo;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use app\Models\Photo;
 
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan semua produk.
      */
     public function index()
     {
-        // Retrieve all products and send them to the view
         $products = Product::all();
-        return view('home.index', compact('products'));
+        return view('products.index', compact('products'));
+    }
+
+    public function create()
+    {
+        $products = Product::all();
+        return view('products.index', compact('products'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $categories = DB::table('categories')->get();
-        return view('addProduct.index', compact('categories'));
-    }
-    /**
-     * Store a newly created resource in storage.
+     * Simpan produk baru (termasuk video).
      */
     public function store(Request $request)
     {
@@ -85,81 +82,41 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Tampilkan detail produk tertentu.
      */
     public function show($id)
     {
-        // Retrieve product by ID
         $product = Product::findOrFail($id);
-
-        // Send data to the view
         return view('products.show', compact('product'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        // Retrieve the product by ID
-        $product = Product::findOrFail($id);
-        return view('products.edit', compact('product'));
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Perbarui video produk tertentu.
      */
     public function update(Request $request, $id)
     {
-        // Find the product by ID
+        $request->validate([
+            'video' => 'nullable|url',
+        ]);
+
         $product = Product::findOrFail($id);
 
-        // Validate data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'productPhotos' => 'nullable|array|max:9',
-            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
-        ]);
-
-        // Update product photos
-        $photoPaths = json_decode($product->photos, true) ?: [];
-        if ($request->hasFile('productPhotos')) {
-            // Delete old photos (optional)
-            foreach ($photoPaths as $photo) {
-                Storage::disk('public')->delete($photo);
-            }
-
-            // Store new photos
-            $photoPaths = [];
-            foreach ($request->file('productPhotos') as $file) {
-                $photoPaths[] = $file->store('products/photos', 'public');
-            }
-        }
-
-        // Update product data
+        // Hanya perbarui video
         $product->update([
-            'name' => $request->input('name'),
-            'photos' => json_encode($photoPaths), // Update photos path as JSON
+            'video' => $request->input('video'),
         ]);
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('products.index')->with('success', 'Video berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Hapus produk tertentu.
      */
     public function destroy($id)
     {
-        // Find the product by ID
         $product = Product::findOrFail($id);
 
-        // Delete associated photos
-        $photoPaths = json_decode($product->photos, true) ?: [];
-        foreach ($photoPaths as $photo) {
-            Storage::disk('public')->delete($photo);
-        }
-
-        // Delete the product
+        // Hapus produk
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
