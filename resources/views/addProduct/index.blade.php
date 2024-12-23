@@ -118,7 +118,70 @@
                 // }
             </script>
 
-            <label for="productVideos" class="form-label">
+            <div class="mb-3">
+                <label for="video" class="form-label">
+                    Link Video Produk<span class="text-danger">*</span>
+                </label>
+                <input type="url" class="form-control border-warning" id="video" name="video"
+                    placeholder="Masukkan URL video YouTube" value="{{ old('video') }}" required>
+                <small id="videoLinkHelp" class="form-text text-muted">
+                    Masukkan URL video dari YouTube.
+                </small>
+                <!-- Tempat untuk menampilkan pratinjau video -->
+                <div id="videoPreviewContainer" class="mt-3">
+                    <small class="text-muted">Pratinjau video akan muncul di sini setelah URL dimasukkan.</small>
+                </div>
+            </div>
+
+            <script>
+                const videoLinkInput = document.getElementById('video');
+                const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+
+                videoLinkInput.addEventListener('input', function () {
+                    const videoURL = videoLinkInput.value.trim();
+
+                    // Reset preview jika input kosong
+                    if (!videoURL) {
+                        videoPreviewContainer.innerHTML = '<small class="text-muted">Pratinjau video akan muncul di sini setelah URL dimasukkan.</small>';
+                        return;
+                    }
+                    // Validasi URL video YouTube dan tampilkan pratinjau
+                    if (isYouTube(videoURL)) {
+                        const videoId = extractYouTubeId(videoURL);
+                        showYouTubePreview(videoId);
+                    } else {
+                        videoPreviewContainer.innerHTML = '<small class="text-danger">URL tidak valid atau bukan video YouTube.</small>';
+                    }
+                });
+
+                // Fungsi untuk memeriksa URL YouTube
+                function isYouTube(url) {
+                    return url.includes("youtube.com") || url.includes("youtu.be");
+                }
+
+                // Fungsi untuk mengambil ID video YouTube
+                function extractYouTubeId(url) {
+                    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+\/\S+[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                    const match = url.match(regex);
+                    return match ? match[1] : null;
+                }
+
+                // Fungsi untuk menampilkan pratinjau YouTube
+                function showYouTubePreview(videoId) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                    iframe.width = '560';
+                    iframe.height = '315';
+                    iframe.frameborder = '0';
+                    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.allowfullscreen = true;
+
+                    videoPreviewContainer.innerHTML = ''; // Hapus konten lama
+                    videoPreviewContainer.appendChild(iframe);
+                }
+            </script>
+
+            {{-- <label for="productVideos" class="form-label">
                 Video Produk <span class="text-danger">*</span>
             </label>
             <!-- Video Upload Section -->
