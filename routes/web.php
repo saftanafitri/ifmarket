@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
-
+use Illuminate\Http\Request;
 /*
 |---------------------------------------------------------------------------
 | Rute untuk Produk
@@ -12,18 +12,14 @@ use App\Http\Controllers\HomeController;
 */
 
 // Rute untuk daftar produk berdasarkan kategori
-Route::get('/products/category/{category}', [ProductController::class, 'filter'])->name('products.filter');
-
+Route::get('/products/category/{category?}', [ProductController::class, 'filter'])->name('products.filter');
 // Menampilkan semua produk
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
-// Menampilkan detail produk berdasarkan ID
+// Menampilkan detail produk berdasarkan nama
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-
 // Membuat produk baru
 Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
 Route::post('products', [ProductController::class, 'store'])->name('products.store');
-
 // Sumber daya produk (CRUD)
 //Route::resource('products', ProductController::class);
 Route::get('addproduct', [ProductController::class, 'create'])->name('products.create');
@@ -34,8 +30,13 @@ Route::get('addproduct', [ProductController::class, 'create'])->name('products.c
 |---------------------------------------------------------------------------
 */
 
-// Beranda
-Route::get('/', [HomeController::class, 'index'])->name('index');
+// Rute untuk landing page
+Route::get('/', function () {
+    return view('landing');
+})->name('index');
+
+// Rute untuk halaman home
+Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 
 // Detail halaman statis
 Route::get('/detail', function () {
@@ -74,21 +75,19 @@ Route::prefix('auth')->group(function () {
 |---------------------------------------------------------------------------
 */
 
-
-Route::get('/products/{filename}', function ($filename) {
-    $path = storage_path('app/private/public/products/' . $filename);
-
-    if (!file_exists($path)) {
-        abort(404);
-    }
-
-    $file = file_get_contents($path);
-    $mimeType = mime_content_type($path);
-
-    return response($file, 200)->header('Content-Type', $mimeType);
-})->name('products.show');
-
-
 Route::get('/product/manage', function () {
     return view('manageproduct');
 })->name('manageProduct');
+
+Route::get('/storage/private/{path}', function ($path) {
+    $filePath = "private/{$path}";
+
+    // Periksa apakah file ada
+    if (!Storage::disk('local')->exists($filePath)) {
+        abort(404, 'File not found.');
+    }
+
+    // Sajikan file
+    return response()->file(storage_path("app/{$filePath}"));
+})->where('path', '.*')->name('private.file');
+

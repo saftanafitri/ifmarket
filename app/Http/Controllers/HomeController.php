@@ -14,10 +14,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->get();
-        return view('home', compact('products'));
-    }
+        // Ambil semua produk
+        $products = Product::with(['category', 'photos'])->get();
 
+        $latestProducts = Product::with('photos')
+            ->latest()
+            ->get();
+    
+        // Kategori aktif default adalah "All"
+        $activeCategory = 'All';
+    
+        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
+    }
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -65,18 +74,37 @@ class HomeController extends Controller
     {
         //
     }
-    public function filter($category = null)
+    public function filter($category = 'All')
     {
-        if ($category && $category !== 'All') {
-            // Filter produk berdasarkan nama kategori
+        // Ambil produk berdasarkan kategori
+        if ($category !== 'All') {
             $products = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', ($category));
-            })->with('category')->get();
+                $query->where('name', $category);
+            })->with(['category', 'photos'])->get();
+    
+            // Ambil maksimal 3 produk terbaru berdasarkan kategori
+            $latestProducts = Product::whereHas('category', function ($query) use ($category) {
+                $query->where('name', $category);
+            })
+            ->with('photos')
+            ->latest()
+            ->take(3)
+            ->get();
         } else {
-            // Ambil semua produk jika kategori tidak disaring
-            $products = Product::with('category')->get();
+            // Jika kategori "All", ambil semua produk
+            $products = Product::with(['category', 'photos'])->get();
+    
+            // Ambil maksimal 3 produk terbaru tanpa filter kategori
+            $latestProducts = Product::with('photos')
+                ->latest()
+                ->take(3)
+                ->get();
         }
     
-        return view('home', compact('products'));
+        // Kirimkan kategori aktif untuk menyesuaikan tombol
+        $activeCategory = $category;
+    
+        // Kirim data ke view
+        return view('products.filter', compact('products', 'latestProducts', 'activeCategory'));
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Photo;
 
-
 class ProductController extends Controller
 {
     /**
@@ -17,38 +16,36 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all(); // Mengambil semua produk
-        return view('products.index', compact('products')); // Kirim data produk ke view
-    }
+        // Ambil semua produk
+        $products = Product::with(['category', 'photos'])->get();
     
-
+        // Ambil maksimal 3 produk terbaru tanpa filter kategori
+        $latestProducts = Product::with('photos')
+            ->latest()
+            ->get();
+    
+        // Kategori aktif default adalah "All"
+        $activeCategory = 'All';
+    
+        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
+    }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-
         $categories = DB::table('categories')->get();
-        return view('addproduct', compact('categories'));
+        return view('products.addproduct', compact('categories'));
     }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // dd($request);
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|string|max:255',
-        //     'category' => 'required|string',
-        //     'description' => 'required|string',
-        //     'seller_name' => 'required|string',
-        //     'email' => 'required|string',
-        //     'productLink' => 'required|string'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
+        $request->validate([
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
+        ]);
 
         // Menyimpan produk
         $product = Product::create([
@@ -56,35 +53,35 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'description' => $request->description,
             'seller_name' => $request->seller_name,
-            'video'=>$request->videoLink,
+            'video' => $request->videoLink,
             'email' => $request->email,
             'instagram' => $request->instagram,
             'linkedin' => $request->linkedin,
             'github' => $request->github,
             'product_link' => $request->productLink
-
-
         ]);
+
+        
         // Photo ini akan di masukkan kedalam product id;
-        if($request->hasFile('productPhotos')){
+        if ($request->hasFile('productPhotos')) {
             $images = $request->file('productPhotos');
 
-            foreach ($images as $key => $image) {
-                // Store the image file
-                $imagePath = 'storage/products/' . $product->id . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/products', $product->id . '.' . $image->getClientOriginalExtension());
+            foreach ($images as $image) {
+                // Generate nama file unik
+                $fileName = $product->id . '-' . time() . '.' . $image->getClientOriginalExtension();
 
-                // Save image details in the database
+                // Simpan ke folder private/publik
+                $imagePath = $image->storeAs('public', $fileName, 'private');
+
+                // Simpan informasi gambar ke database
                 Photo::create([
                     'product_id' => $product->id,
-                    'url' => 'storage/' . $imagePath,
+                    'url' => $fileName, // Simpan path relatif
                 ]);
             }
-        };
-
-        return redirect()->route('index')->with('success', 'Product created successfully');
-    }
-
+        }
+        return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
+    }      
 
     /**
      * Display the specified resource.
@@ -95,7 +92,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         // Send data to the view
-        return view('details', compact('product'));
+        return view('detailsproduct.details', compact('product'));
     }
 
     /**
@@ -166,18 +163,39 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
-    public function filter($category = null)
+
+    public function filter($category = 'All')
     {
-        if ($category && $category !== 'All') {
-            // Filter produk berdasarkan nama kategori
+        // Ambil produk berdasarkan kategori
+        if ($category !== 'All') {
             $products = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', ($category));
-            })->with('category')->get();
+                $query->where('name', $category);
+            })->with(['category', 'photos'])->get();
+    
+            // Ambil maksimal 3 produk terbaru berdasarkan kategori
+            $latestProducts = Product::whereHas('category', function ($query) use ($category) {
+                $query->where('name', $category);
+            })
+            ->with('photos')
+            ->latest()
+            ->take(3)
+            ->get();
         } else {
-            // Ambil semua produk jika kategori tidak disaring
-            $products = Product::with('category')->get();
+            // Jika kategori "All", ambil semua produk
+            $products = Product::with(['category', 'photos'])->get();
+    
+            // Ambil maksimal 3 produk terbaru tanpa filter kategori
+            $latestProducts = Product::with('photos')
+                ->latest()
+                ->take(3)
+                ->get();
         }
     
-        return view('home', compact('products'));
+        // Kirimkan kategori aktif untuk menyesuaikan tombol
+        $activeCategory = $category;
+    
+        // Kirim data ke view
+        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
+
 }

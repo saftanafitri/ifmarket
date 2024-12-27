@@ -1,0 +1,70 @@
+/* Kotak Tambah Foto */
+.add-photo-box {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ffc107; /* Warna kuning */
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    background-color: #fff8e1; /* Warna latar belakang */
+    transition: background-color 0.3s ease;
+}
+
+.add-photo-box:hover {
+    background-color: #ffe082; /* Warna latar saat hover */
+}
+
+/* Konten dalam kotak tambah foto */
+.add-photo-content {
+    text-align: center;
+}
+
+.add-photo-icon {
+    font-size: 36px;
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.add-photo-text {
+    font-size: 14px;
+    color: #ffc107;
+    margin-top: 5px;
+}
+
+/* Pratinjau Foto */
+#photoPreview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+    position: relative;
+}
+
+/* Tombol hapus di atas foto */
+.photo-remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #f44336; /* Warna merah */
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.photo-remove-btn:hover {
+    background-color: #d32f2f; /* Warna merah gelap saat hover */
+}

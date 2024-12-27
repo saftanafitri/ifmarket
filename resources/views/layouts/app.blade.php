@@ -8,8 +8,10 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/icontrash.css') }}">
+    
 </head>
-
+    
 <body>
     <!-- Header -->
     <header class="bg-custom py-3">
@@ -41,7 +43,7 @@
                 </div>
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    @if(Route::currentRouteName() == 'index')
+                    @if(Route::currentRouteName() == 'home.index')
                     <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                     <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
                     @elseif (Route::currentRouteName() == 'addProduct')
@@ -55,7 +57,7 @@
                     <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                     <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
                     @else
-                    <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
+                    <li><a class="dropdown-item" href="{{ route('home.index') }}">Home</a></li>
                     <li>@endif
                         <hr class="dropdown-divider">
                     </li>
