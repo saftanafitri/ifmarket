@@ -39,9 +39,12 @@
                     </div>
                 </div>
             </div>
-            <!-- Product Description -->
-            <div class="col-md-6">
-                <h2>Curabitur pulvinar aliquam lectus, non blandit erat mattis vitae.</h2>
+            <!-- Description Produk -->
+            <div class="row">
+                        <h2>{{ $product->name }}</h2>
+                        <p>{{ $product->description }}</p>
+                    </div>
+            </div>
 
                 <!-- Profile section -->
                 <div class="d-flex justify-content-between align-items-center">
@@ -54,7 +57,7 @@
                             <path fill-rule="evenodd"
                                 d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                         </svg>
-                        <span>Saftana Fitri</span>
+                        <span>{{ $product->seller_name }}</span>
                     </div>
 
                     <!-- Social media icons on the right -->
@@ -90,13 +93,7 @@
                     </div>
                 </div>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget mauris vulputate, sollicitudin orci
-                    at, elementum lorem. Etiam nec neque a tortor malesuada consequat eu in nunc. Vivamus sapien sem,
-                    sollicitudin vel dolor at, rutrum elementum ipsum. Vestibulum vel nisi tincidunt, bibendum dolor sed,
-                    mattis turpis. Integer vehicula semper sapien sed pellentesque. Morbi ac tempor eros. Vestibulum
-                    accumsan, erat volutpat interdum accumsan, orci libero ornare mi, quis mattis sem ex id leo. Donec
-                    sollicitudin elementum dolor et bibendum.</p>
-                <a href="https://example.com/produk" class="btn btn-custom">Lihat Produk</a>
+                 <a href="{{ $product->product_link }}" class="btn btn-custom" target="_blank" rel="noopener noreferrer">Lihat Produk</a>
             </div>
 
         </div>
@@ -174,3 +171,4 @@
         </div>
     </section>
 @endsection
+

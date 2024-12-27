@@ -9,6 +9,8 @@ class Product extends Model
 {
     use HasFactory;
 
+
+    protected $table = 'products';
     protected $fillable = [
         'name',
         'photos',
@@ -20,7 +22,7 @@ class Product extends Model
         'linkedin',
         'github',
         'product_link',
-        'category_id'
+        'category_id',
     ];
 
 
@@ -32,6 +34,6 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }  
+    } 
 }
 

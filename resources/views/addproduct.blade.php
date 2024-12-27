@@ -28,181 +28,69 @@
                 </div>
             </div>
 
-            <script>
-                // let existingPhotos = []; // To keep track of already uploaded photos
-
-                // // Handle the photo input click
-                // document.querySelector('#addPhotoBox')?.addEventListener('click', function() {
-                //     const photoInput = document.getElementById('productPhotos');
-                //     if (photoInput) {
-                //         photoInput.click();
-                //     } else {
-                //         console.error('Photo input element not found.');
-                //     }
-                // });
-
-                // document.getElementById('productPhotos').addEventListener('change', function() {
-                //     const totalFileCount = document.querySelectorAll('#photoPreview img').length + this.files.length;
-                //     const label = document.getElementById('photoLabelText');
-
-                //     if (totalFileCount > 9) {
-                //         alert('You can only upload up to 9 photos.');
-                //         return;
-                //     }
-
-                //     label.textContent = `${totalFileCount}/9`;
-
-                //     if (totalFileCount === 9) {
-                //         document.getElementById('addPhotoBox').hidden = true; // Hide the add button
-                //     }
-
-                //     // Loop through the selected files and create image previews
-                //     const photoPreview = document.getElementById('photoPreview');
-                //     const files = Array.from(this.files).slice(0, 9 - document.querySelectorAll('#photoPreview img').length);
-                //     files.forEach(file => {
-                //         const reader = new FileReader();
-                //         reader.onload = ({ target }) => {
-                //             const photoWrapper = document.createElement('div');
-                //             photoWrapper.style.position = 'relative';
-                //             photoWrapper.style.display = 'inline-block';
-                //             photoWrapper.style.marginRight = '10px';
-
-                //             const img = document.createElement('img');
-                //             img.src = target.result;
-                //             img.style.width = '100px';
-                //             img.style.height = '100px';
-                //             img.style.objectFit = 'cover';
-                //             img.classList.add('rounded');
-
-                //             // Create trash icon and append to the image
-                //             const trashIcon = document.createElement('i');
-                //             trashIcon.classList.add('fa', 'fa-trash');
-                //             trashIcon.style.position = 'absolute';
-                //             trashIcon.style.top = '5px';
-                //             trashIcon.style.right = '5px';
-                //             trashIcon.style.color = 'white';
-                //             trashIcon.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                //             trashIcon.style.borderRadius = '50%';
-                //             trashIcon.style.cursor = 'pointer';
-                //             trashIcon.style.padding = '5px';
-
-                //             trashIcon.addEventListener('click', function() {
-                //                 // Remove the photo from the preview and reset input
-                //                 photoWrapper.remove();
-                //                 label.textContent = `${document.querySelectorAll('#photoPreview img').length}/9`;
-                //             });
-
-                //             // Append image and trash icon to the wrapper
-                //             photoWrapper.appendChild(img);
-                //             photoWrapper.appendChild(trashIcon);
-                //             photoPreview.appendChild(photoWrapper);
-                //         };
-                //         reader.readAsDataURL(file);
-                //     });
-
-                //     // Reset the file input so user can add more photos
-                //     this.value = '';
-                // });
-
-                // function updateFileCount() {
-                //     const totalPhotos = document.querySelectorAll('#photoPreview img').length;
-                //     const label = document.getElementById('photoLabelText');
-                //     label.textContent = `${totalPhotos}/9`;
-
-                //     // Show the Add Photo button sif there are fewer than 9 photos
-                //     if (totalPhotos < 9) {
-                //         document.getElementById('addPhotoBox').style.display = 'flex';
-                //     } else {
-                //         document.getElementById('addPhotoBox').style.display = 'none'; // Hide if 9 photos are reached
-                //     }
-                // }
-            </script>
-
-            <label for="productVideos" class="form-label">
-                Video Produk <span class="text-danger">*</span>
-            </label>
-            <!-- Video Upload Section -->
-            <div id="videoSection">
-                <div id="addVideoBox" class="border border-warning rounded text-center py-3"
-                    style="cursor: pointer; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-                    <input type="file" id="productVideo" name="productVideo" class="form-control d-none"
-                        accept="video/*">
-                    <span id="videoLabel" style="font-size: 24px; color: black; position: absolute; top: 10px;">+</span>
-                    <span id="videoLabelText"
-                        style="font-size: 14px; color: black; position: absolute; bottom: 10px;">0/1</span>
+            <div class="mb-3">
+                <label for="videoLink" class="form-label">
+                    Link Video Produk<span class="text-danger">*</span>
+                </label>
+                <input type="url" class="form-control border-warning" id="videoLink" name="videoLink"
+                    placeholder="Masukkan URL video YouTube" value="{{ old('videoLink') }}" required>
+                <small id="videoLinkHelp" class="form-text text-muted">
+                    Masukkan URL video dari YouTube.
+                </small>
+                <!-- Tempat untuk menampilkan pratinjau video -->
+                <div id="videoPreviewContainer" class="mt-3">
+                    <small class="text-muted">Pratinjau video akan muncul di sini setelah URL dimasukkan.</small>
                 </div>
-                <div id="videoPreview" class="mt-3"></div>
             </div>
 
             <script>
                 // Video Upload Logic
-                document.getElementById('addVideoBox').addEventListener('click', function() {
-                    document.getElementById('productVideo').click();
-                });
+                const videoLinkInput = document.getElementById('videoLink');
+                const videoPreviewContainer = document.getElementById('videoPreviewContainer');
 
-                document.getElementById('productVideo').addEventListener('change', function() {
-                    const videoFile = this.files[0];
-                    const label = document.getElementById('videoLabelText');
+                videoLinkInput.addEventListener('input', function () {
+                const videoURL = videoLinkInput.value.trim();
 
                     // Check if the video already exists
-                    if (document.querySelectorAll('#videoPreview video').length > 0) {
-                        alert('Only 1 video can be uploaded.');
+                    if (!videoURL) {
+                         videoPreviewContainer.innerHTML = '<small class="text-muted">Pratinjau video akan muncul di sini setelah URL dimasukkan.</small>';
                         return;
+                    } 
+
+                    if (isYouTube(videoURL)) {
+                        const videoId = extractYouTubeId(videoURL);
+                        showYouTubePreview(videoId);
+                    } else {
+                        videoPreviewContainer.innerHTML = '<small class="text-danger">URL tidak valid atau bukan video YouTube.</small>';
+                    }
+             });
+
+                // Fungsi untuk memeriksa URL YouTube
+                function isYouTube(url) {
+                        return url.includes("youtube.com") || url.includes("youtu.be");
                     }
 
-                    // Check if a file is selected
-                    if (videoFile) {
-                        label.textContent = '1/1';
-
-                        // Hide the add video box after one video is uploaded
-                        document.getElementById('addVideoBox').style.display = 'none';
-
-                        // Create video preview
-                        const videoPreview = document.getElementById('videoPreview');
-                        const videoWrapper = document.createElement('div');
-                        videoWrapper.style.position = 'relative';
-                        videoWrapper.style.display = 'inline-block';
-
-                        const videoElement = document.createElement('video');
-                        videoElement.controls = true;
-                        videoElement.style.width = '200px';
-                        videoElement.style.height = '150px';
-                        videoElement.style.objectFit = 'cover';
-
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            videoElement.src = e.target.result;
-                        };
-                        reader.readAsDataURL(videoFile);
-
-                        // Create trash icon for removing video
-                        const trashIcon = document.createElement('i');
-                        trashIcon.classList.add('fa', 'fa-trash');
-                        trashIcon.style.position = 'absolute';
-                        trashIcon.style.top = '5px';
-                        trashIcon.style.right = '5px';
-                        trashIcon.style.color = 'white';
-                        trashIcon.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                        trashIcon.style.borderRadius = '50%';
-                        trashIcon.style.cursor = 'pointer';
-                        trashIcon.style.padding = '5px';
-
-                        // Event to remove video
-                        trashIcon.addEventListener('click', function() {
-                            videoWrapper.remove();
-                            document.getElementById('addVideoBox').style.display =
-                                'flex'; // Show add video button again
-                            label.textContent = '0/1';
-                            document.getElementById('productVideo').value = ''; // Reset input file
-                        });
-
-                        // Append video and trash icon to the wrapper
-                        videoWrapper.appendChild(videoElement);
-                        videoWrapper.appendChild(trashIcon);
-                        videoPreview.appendChild(videoWrapper);
+                    // Fungsi untuk mengambil ID video YouTube
+                    function extractYouTubeId(url) {
+                        const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+\/\S+[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                        const match = url.match(regex);
+                        return match ? match[1] : null;
                     }
-                });
-            </script>
+
+                    // Fungsi untuk menampilkan pratinjau YouTube
+                    function showYouTubePreview(videoId) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                        iframe.width = '560';
+                        iframe.height = '315';
+                        iframe.frameborder = '0';
+                        iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.allowfullscreen = true;
+
+                        videoPreviewContainer.innerHTML = ''; // Hapus konten lama
+                        videoPreviewContainer.appendChild(iframe);
+                    }
+                </script>
 
             <div class="mb-3">
                 <label class="form-label" for="name">Nama Produk <span class="text-danger">*</span></label>

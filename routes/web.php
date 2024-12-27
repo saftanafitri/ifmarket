@@ -1,30 +1,53 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\HomeController;
 
 /*
-|--------------------------------------------------------------------------
-| Home & Static Pages
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
+| Rute untuk Produk
+|---------------------------------------------------------------------------
+*/
+
+// Rute untuk daftar produk berdasarkan kategori
+Route::get('/products/category/{category}', [ProductController::class, 'filter'])->name('products.filter');
+
+// Menampilkan semua produk
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
+// Menampilkan detail produk berdasarkan ID
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+
+// Membuat produk baru
+Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+Route::post('products', [ProductController::class, 'store'])->name('products.store');
+
+// Sumber daya produk (CRUD)
+//Route::resource('products', ProductController::class);
+Route::get('addproduct', [ProductController::class, 'create'])->name('products.create');
+
+/*
+|---------------------------------------------------------------------------
+| Rute untuk Halaman Statis
+|---------------------------------------------------------------------------
 */
 
 // Beranda
-Route::get('/', function () {
-    return view('home');
-})->name('index');
+Route::get('/', [HomeController::class, 'index'])->name('index');
 
-// Halaman detail (contoh untuk produk atau informasi lainnya)
+// Detail halaman statis
 Route::get('/detail', function () {
     return view('details');
 })->name('detail');
 
 /*
-|--------------------------------------------------------------------------
-| Authentication Routes
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
+| Rute untuk Autentikasi
+|---------------------------------------------------------------------------
 */
+
 Route::prefix('auth')->group(function () {
     // Login
     Route::get('/login', function () {
@@ -46,40 +69,26 @@ Route::prefix('auth')->group(function () {
 });
 
 /*
-|--------------------------------------------------------------------------
-| Routes for Product Management (Video)
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
+| Rute untuk Manajemen Produk
+|---------------------------------------------------------------------------
 */
 
-Route::resource('products', ProductController::class)->except(['edit']); // CRUD untuk produk (video)
 
-/*
-|--------------------------------------------------------------------------
-| Routes for Photo Management (Foto)
-|--------------------------------------------------------------------------
-*/
+Route::get('/products/{filename}', function ($filename) {
+    $path = storage_path('app/private/public/products/' . $filename);
 
-// Tampilkan semua foto untuk produk tertentu
-//Route::get('products/{productId}/photos', [PhotoController::class, 'index'])->name('photos.index');
+    if (!file_exists($path)) {
+        abort(404);
+    }
 
-// Tambahkan foto untuk produk tertentu
-//Route::post('products/{productId}/photos', [PhotoController::class, 'store'])->name('photos.store');
+    $file = file_get_contents($path);
+    $mimeType = mime_content_type($path);
 
-// Perbarui foto
-//Route::patch('photos/{id}', [PhotoController::class, 'update'])->name('photos.update');
+    return response($file, 200)->header('Content-Type', $mimeType);
+})->name('products.show');
 
-// Hapus foto
-//Route::delete('photos/{id}', [PhotoController::class, 'destroy'])->name('photos.destroy');
-//Route::get('/add-product', [ProductController::class, 'create'])->name('products.create');
-
-
-/*
-|--------------------------------------------------------------------------
-| Manage Products Page (Optional)
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/product/manage', function () {
-    return view('manageProduct.index');
+    return view('manageproduct');
 })->name('manageProduct');
-Route::resource('products', ProductController::class);
