@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            // Tambahkan perubahan lain, jika ada
+            // Tidak perlu menambahkan foreign key lagi jika sudah ada
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            // Tidak ada perubahan untuk di-reverse
         });
     }
 };

@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('linkedin')->nullable(); // LinkedIn link (nullable)
             $table->string('github')->nullable(); // GitHub link (nullable)
             $table->string('product_link'); // Product link (required)
-            $table->unsignedBigInteger('category_id'); // Unsigned BIGINT
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

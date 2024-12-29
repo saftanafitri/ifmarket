@@ -162,66 +162,89 @@
             }
         </script>
 
-            <div class="mb-3">
-                <label class="form-label" for="name">Nama Produk <span class="text-danger">*</span></label>
-                <input type="text" class="form-control border-warning" id="name" name="name" placeholder="Input"
-                    value="{{ old('name') }}" required>
+        <div class="mb-3">
+            <label class="form-label" for="name">Nama Produk <span class="text-danger">*</span></label>
+            <input type="text" class="form-control border-warning" id="name" name="name" placeholder="Input"
+                value="{{ old('name') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="category_id">Kategori Produk <span class="text-danger">*</span></label>
+            <select class="form-select border-warning" id="category_id" name="category_id" required>
+                <option value="">Pilih kategori</option>
+                @foreach ($categories as $items)
+                    <option value="{{ $items->id }}" {{ isset($items->id) || old('id') ? 'selected' : '' }}>
+                        {{ $items->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="description">Deskripsi Produk <span class="text-danger">*</span></label>
+            <textarea class="form-control border-warning" id="description" name="description" rows="3" placeholder="Input"
+                required>{{ old('description') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <div id="seller-container">
+                <!-- Render initial seller inputs -->
+                @php $oldSellers = old('seller_name', ['']); @endphp
+                @foreach ($oldSellers as $index => $sellerName)
+                    <div class="mb-3 seller-item">
+                        <label class="form-label">Nama Pemilik Produk <span class="text-danger">*</span></label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control border-warning" 
+                                   id="seller_name_{{ $index + 1 }}" 
+                                   name="seller_name[]" 
+                                   placeholder="Input nama penjual" 
+                                   value="{{ $sellerName }}" required>
+                            <span class="remove-btn" onclick="removeSeller(this)" title="Hapus Penjual">&times;</span>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-
-            <div class="mb-3">
-                <label class="form-label" for="category_id">Kategori Produk <span class="text-danger">*</span></label>
-                <select class="form-select border-warning" id="category_id" name="category_id" required>
-                    <option value="">Pilih kategori</option>
-                    @foreach ($categories as $items)
-                        <option value="{{ $items->id }}" {{ isset($items->id) || old('id') ? 'selected' : '' }}>
-                            {{ $items->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="mt-3">
+                <button type="button" class="btn btn-warning" onclick="addSeller()">Tambah</button>
             </div>
+        </div>
+        
 
-            <div class="mb-3">
-                <label class="form-label" for="description">Deskripsi Produk <span class="text-danger">*</span></label>
-                <textarea class="form-control border-warning" id="description" name="description" rows="3" placeholder="Input"
-                    required>{{ old('description') }}</textarea>
-            </div>
+        <script>
+            let sellerCount = document.querySelectorAll('.seller-item').length || 1;
 
-            <div class="mb-3">
-                <label class="form-label" for="seller_name">Nama Penjual <span class="text-danger">*</span></label>
-                <input type="text" class="form-control border-warning" id="seller_name" name="seller_name"
-                    placeholder="Input" value="{{ old('seller_name') }}" required>
-            </div>
-            <script>
-    //     let sellerCount = 1;
+            // Function to add a new seller input
+            function addSeller() {
+                sellerCount++;
+                const sellerContainer = document.getElementById('seller-container');
+                const newSeller = document.createElement('div');
+                newSeller.classList.add('mb-3', 'seller-item');
+                newSeller.innerHTML = `
+                    <label class="form-label">Nama Pemilik Produk <span class="text-danger">*</span></label>
+                    <div class="d-flex">
+                        <input type="text" class="form-control border-warning" 
+                            id="seller_name_${sellerCount}" 
+                            name="seller_name[]" 
+                            placeholder="Input nama penjual" 
+                            required>
+                        <span class="remove-btn" onclick="removeSeller(this)" title="Hapus Penjual">&times;</span>
+                    </div>
+                `;
+                sellerContainer.appendChild(newSeller);
+            }
 
-    //     // Function to add a new seller input
-    //     function addSeller() {
-    //         sellerCount++;
-    //         const sellerContainer = document.getElementById('seller-container');
-    //         const newSeller = document.createElement('div');
-    //         newSeller.classList.add('mb-3', 'seller-item');
-    //         newSeller.innerHTML = `
-    //             <label class="form-label" for="seller_name_${sellerCount}">Nama Penjual <span class="text-danger">*</span></label>
-    //             <div class="d-flex">
-    //                 <input type="text" class="form-control border-warning" id="seller_name_${sellerCount}" name="seller_name[]"
-    //                     placeholder="Input" required>
-    //                 <span class="remove-btn" onclick="removeSeller(this)" title="Hapus Penjual">&times;</span>
-    //             </div>
-    //         `;
-    //         sellerContainer.appendChild(newSeller);
-    //     }
+            // Function to remove a seller input
+            function removeSeller(button) {
+                const sellerContainer = document.getElementById('seller-container');
+                if (sellerContainer.children.length > 1) {
+                    button.parentElement.parentElement.remove();
+                } else {
+                    alert('Minimal harus ada satu penjual.');
+                }
+}
 
-    //     // Function to remove a seller input
-    //     function removeSeller(button) {
-    //         const sellerContainer = document.getElementById('seller-container');
-    //         if (sellerContainer.children.length > 1) {
-    //             button.parentElement.parentElement.remove();
-    //         } else {
-    //             alert('Minimal harus ada satu penjual.');
-    //         }
-    //     }
-     </script>
-
+                </script>
+                
             <div class="mb-3">
                 <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
                 <input type="email" class="form-control border-warning" id="email" name="email"

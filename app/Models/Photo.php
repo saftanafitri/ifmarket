@@ -10,12 +10,13 @@ class Photo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id', 'url',
+        'product_id',
+        'url', // Path lengkap sesuai dengan yang disimpan di database
     ];
 
-     // Define the inverse relationship with the Product model
-     public function product()
-     {
-         return $this->belongsTo(Product::class);
-     }
+    // Relasi dengan produk
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

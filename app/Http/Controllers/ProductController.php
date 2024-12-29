@@ -3,99 +3,217 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Photo;
 
 class ProductController extends Controller
 {
     /**
-     * Tampilkan semua produk.
+     * Display a listing of the resource.
      */
     public function index()
     {
-        $products = Product::all();
-        return view('products.index', compact('products'));
+        // Ambil semua produk
+        $products = Product::with(['category', 'photos'])->get();
+    
+        // Ambil maksimal 3 produk terbaru tanpa filter kategori
+        $latestProducts = Product::with('photos')
+            ->latest()
+            ->get();
+    
+        // Kategori aktif default adalah "All"
+        $activeCategory = 'All';
+    
+        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
+    }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $categories = DB::table('categories')->get();
+        return view('products.addproduct', compact('categories'));
     }
 
     /**
-     * Simpan produk baru (termasuk video).
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'required|integer',
             'description' => 'required|string',
-            'seller_name' => 'required|string|max:255',
+            'seller_name' => 'required|array', // Pastikan seller_name adalah array
+            'videoLink' => 'nullable|url',
             'email' => 'required|email',
-            'video' => 'nullable|url',
-            'product_link' => 'required|string|max:255', // Tambahkan validasi untuk product_link
+            'instagram' => 'nullable|url',
+            'linkedin' => 'nullable|url',
+            'github' => 'nullable|url',
+            'productLink' => 'required|url',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
         ]);
-        
-
-        // Membuat produk baru
-        Product::create([
+    
+        // Ubah array menjadi JSON string sebelum disimpan
+        $sellerNames = implode(', ', $request->seller_name);
+    
+        // Simpan data produk
+        $product = Product::create([
             'name' => $request->name,
             'category_id' => $request->category_id,
             'description' => $request->description,
-            'seller_name' => $request->seller_name,
+            'seller_name' => $sellerNames, // Simpan dalam format string
+            'video' => $request->videoLink,
             'email' => $request->email,
             'instagram' => $request->instagram,
             'linkedin' => $request->linkedin,
             'github' => $request->github,
-            'product_link' => $request->product_link ?? '', // Berikan nilai default jika kosong
-            'video' => $request->video,
+            'product_link' => $request->productLink
         ]);
-        
-        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
-    }
-
-    public function create()
-    {
-         // Ambil semua kategori dari tabel categories
-    $categories = Category::all();
     
-    // Kirim variabel $categories ke view addproduct
-    return view('addproduct', compact('categories')); 
+        // Simpan foto produk
+        if ($request->hasFile('productPhotos')) {
+            $images = $request->file('productPhotos');
+    
+            foreach ($images as $image) {
+                // Generate nama file unik
+                $fileName = $product->id . '-' . time() . '.' . $image->getClientOriginalExtension();
+    
+                // Simpan ke folder storage
+                $imagePath = $image->storeAs('private/public', $fileName);
+    
+                // Simpan informasi gambar ke database
+                Photo::create([
+                    'product_id' => $product->id,
+                    'url' => $fileName, // Simpan path relatif
+                ]);
+            }
+        }
+    
+        return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
     }
+    
     /**
-     * Tampilkan detail produk tertentu.
+     * Display the specified resource.
      */
     public function show($id)
     {
+        // Ambil produk berdasarkan ID
+        $product = Product::with(['category', 'photos'])->findOrFail($id);
+    
+        // Ambil produk terkait berdasarkan kategori yang sama, kecuali produk yang sedang ditampilkan
+        $relatedProducts = Product::with('photos')
+            ->where('category_id', $product->category_id) // Filter kategori yang sama
+            ->where('id', '!=', $product->id) // Kecualikan produk yang sedang dilihat
+            ->take(3) // Batasi jumlah produk terkait
+            ->get();
+    
+        // Kirim data ke view
+        return view('detailsproduct.details', compact('product', 'relatedProducts'));
+    }
+    
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        // Retrieve the product by ID
         $product = Product::findOrFail($id);
-        return view('products.show', compact('product'));
+        return view('products.edit', compact('product'));
     }
 
     /**
-     * Perbarui video produk tertentu.
+     * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'video' => 'nullable|url',
-        ]);
-
+        // Find the product by ID
         $product = Product::findOrFail($id);
 
-        // Hanya perbarui video
-        $product->update([
-            'video' => $request->input('video'),
+        // Validate data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'productPhotos' => 'nullable|array|max:9',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
         ]);
 
-        return redirect()->route('products.index')->with('success', 'Video berhasil diperbarui.');
+        // Update product photos
+        $photoPaths = json_decode($product->photos, true) ?: [];
+        if ($request->hasFile('productPhotos')) {
+            // Delete old photos (optional)
+            foreach ($photoPaths as $photo) {
+                Storage::disk('public')->delete($photo);
+            }
+
+            // Store new photos
+            $photoPaths = [];
+            foreach ($request->file('productPhotos') as $file) {
+                $photoPaths[] = $file->store('products/photos', 'public');
+            }
+        }
+
+        // Update product data
+        $product->update([
+            'name' => $request->input('name'),
+            'photos' => json_encode($photoPaths), // Update photos path as JSON
+        ]);
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
-     * Hapus produk tertentu.
+     * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
+        // Find the product by ID
         $product = Product::findOrFail($id);
 
-        // Hapus produk
+        // Delete associated photos
+        $photoPaths = json_decode($product->photos, true) ?: [];
+        foreach ($photoPaths as $photo) {
+            Storage::disk('public')->delete($photo);
+        }
+
+        // Delete the product
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
+
+    public function filter($category = 'All')
+    {
+        // Ambil produk berdasarkan kategori
+        if ($category !== 'All') {
+            $products = Product::whereHas('category', function ($query) use ($category) {
+                $query->where('name', $category);
+            })->with(['category', 'photos'])->get();
+    
+            // Ambil maksimal 3 produk terbaru berdasarkan kategori
+            $latestProducts = Product::whereHas('category', function ($query) use ($category) {
+                $query->where('name', $category);
+            })
+            ->with('photos')
+            ->latest()
+            ->take(3)
+            ->get();
+        } else {
+    
+            // Ambil maksimal 3 produk terbaru tanpa filter kategori
+            $latestProducts = Product::with('photos')
+                ->latest()
+                ->take(3)
+                ->get();
+        }
+    
+        // Kirimkan kategori aktif untuk menyesuaikan tombol
+        $activeCategory = $category;
+    
+        // Kirim data ke view
+        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
+    }
+
 }

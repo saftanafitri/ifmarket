@@ -9,6 +9,8 @@ class Product extends Model
 {
     use HasFactory;
 
+
+    protected $table = 'products';
     protected $fillable = [
         'name',
         'photos',
@@ -20,18 +22,22 @@ class Product extends Model
         'linkedin',
         'github',
         'product_link',
-        'category_id'
+        'category_id',
+    ];
+
+    protected $casts = [
+        'seller_name' => 'array',  
     ];
 
 
     public function photos()
     {
-        return $this->hasMany(Photo::class);
+        return $this->hasMany(Photo::class, 'product_id');
     }
 
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }  
+    } 
 }
 
