@@ -3,3 +3,5 @@
 !private/
 !.gitignore
 !private/public/*
+!storage/app/private/public/
+!storage/app/private/public/*
