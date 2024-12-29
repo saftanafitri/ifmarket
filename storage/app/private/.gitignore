@@ -3,3 +3,5 @@
 !public/
 !private/
 !private/public/*
+!storage/app/private/public/
+!storage/app/private/public/*
