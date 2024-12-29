@@ -7,16 +7,47 @@
         <div class="container">
             <div class="header-section d-flex justify-content-between align-items-center mb-4">
                 <h2 class="text-left">Products</h2>
-                @php $activeCategory = request()->route('category') ?? 'All'; @endphp
-                <div class="sorting-buttons">
-                    <a href="{{ route('products.filter', 'All') }}" class="sort-btn {{ $activeCategory === 'All' ? 'active' : '' }}">All</a>
-                    <a href="{{ route('products.filter', 'Kerja Praktik(KP)') }}" class="sort-btn {{ $activeCategory === 'Kerja Praktik(KP)' ? 'active' : '' }}">Kerja Praktik (KP)</a>
-                    <a href="{{ route('products.filter', 'Tugas Akhir(TA)') }}" class="sort-btn {{ $activeCategory === 'Tugas Akhir(TA)' ? 'active' : '' }}">Tugas Akhir (TA)</a>
-                    <a href="{{ route('products.filter', 'Penelitian') }}" class="sort-btn {{ $activeCategory === 'Penelitian' ? 'active' : '' }}">Penelitian</a>
-                    <a href="{{ route('products.filter', 'Pengabdian Masyarakat') }}" class="sort-btn {{ $activeCategory === 'Pengabdian Masyarakat' ? 'active' : '' }}">Pengabdian pada Masyarakat</a>
-                    <a href="{{ route('products.filter', 'Tugas Kuliah') }}" class="sort-btn {{ $activeCategory === 'Tugas Kuliah' ? 'active' : '' }}">Tugas Kuliah</a>
-                </div>
-            </div>
+                <style>
+    #category-select {
+        background-color: #f8d219; /* Warna latar dropdown */
+        color:#f9f8db; /* Warna teks */
+        border: 2px solid #f1c40f; /* Garis tepi kuning */
+        border-radius: 5px; /* Membulatkan sudut */
+        padding: 5px; /* Jarak teks ke tepi */
+        font-size: 16px; /* Ukuran teks */
+    }
+
+    #category-select option {
+        background-color: #f8d219; /* Warna latar untuk opsi */
+        color: #f9f8db; /* Warna teks */
+    }
+    .card-img-top {
+        width: 100%; /* Memastikan lebar gambar mengikuti lebar kartu */
+        height: 75px; /* Tetapkan tinggi tetap untuk gambar */
+        object-fit: cover; /* Memastikan gambar tetap terlihat bagus dengan cropping jika perlu */
+    }
+    .card-img {
+        width: 100%; /* Mengatur lebar gambar sesuai dengan kartu */
+        height: 200px; /* Menetapkan tinggi tetap untuk gambar */
+        object-fit: cover; /* Menjaga rasio aspek dan memotong bagian yang tidak sesuai */
+    }
+</style>
+
+                @php $activeCategory = request()->route('category') ?? null; @endphp
+                <div class="sorting-dropdown">
+        <form action="{{ route('products.filter', $activeCategory) }}" method="GET" id="category-form">
+        <select name="category" id="category-select" class="form-select" onchange="location.href=this.value;">
+            <option value="{{ route('products.filter', 'All') }}" {{ $activeCategory === 'All' ? 'selected' : '' }}>All</option>
+            <option value="{{ route('products.filter', 'Kerja Praktik(KP)') }}" {{ $activeCategory === 'Kerja Praktik(KP)' ? 'selected' : '' }}>Kerja Praktik (KP)</option>
+            <option value="{{ route('products.filter', 'Tugas Akhir(TA)') }}" {{ $activeCategory === 'Tugas Akhir(TA)' ? 'selected' : '' }}>Tugas Akhir (TA)</option>
+            <option value="{{ route('products.filter', 'Penelitian') }}" {{ $activeCategory === 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
+            <option value="{{ route('products.filter', 'Pengabdian Masyarakat') }}" {{ $activeCategory === 'Pengabdian Masyarakat' ? 'selected' : '' }}>Pengabdian pada Masyarakat</option>
+            <option value="{{ route('products.filter', 'Tugas Kuliah') }}" {{ $activeCategory === 'Tugas Kuliah' ? 'selected' : '' }}>Tugas Kuliah</option>
+        </select>
+    </form>
+</div>
+</div>
+
             <div class="row" id="product-list">
                 @foreach ($products as $product)
                     <div class="col-md-4 col-lg-2 product-item" data-category="{{ $product->category->name }}">
@@ -45,7 +76,7 @@
                                     </svg>
                                     <p class="mb-0 text-nowrap">{{ $product->seller_name }}</p>
                                 </div>
-                                <a href="{{ route('products.show', $product->id) }}" class="btn custom-btn btn-sm mt-3">View Details</a>
+                                <a href="{{ route('products.show', $product->id) }}" class="btn custom-btn btn-sm mt-3">View</a>
                             </div>
                         </div>
                     </div>
@@ -54,7 +85,6 @@
             </div>
         </div>
     </section>
-    
                 <section>
                     <div class="container mb-5">
                         <h2 class="text-center mb-4">Latest Products</h2>
@@ -66,13 +96,13 @@
                                         @if ($product->photos->isNotEmpty())
                                             <img src="{{ route('private.file', ['path' => 'public/' . $product->photos->first()->url]) }}" 
                                                  alt="{{ $product->name }}" 
-                                                 class="card-img-top" 
+                                                 class="card-img" 
                                                  style="border-radius: 0;">
                                         @else
                                             {{-- Placeholder jika tidak ada foto --}}
                                             <img src="{{ asset('images/placeholder.png') }}" 
                                                  alt="No Image Available" 
-                                                 class="card-img-top" 
+                                                 class="card-img" 
                                                  style="border-radius: 0;">
                                         @endif
                                         <div class="card-body">

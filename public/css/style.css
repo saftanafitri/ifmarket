@@ -50,6 +50,21 @@ header h1 span {
   border-radius: 0px;
   padding: 15px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  display: flex; /* Atur layout flex untuk gambar dan teks */
+  align-items: center; /* Rata tengah secara vertikal */
+  padding: 10px;
+}
+
+.card .card-img-left {
+  width: 150px; /* Atur lebar gambar */
+  height: auto; /* Pertahankan aspek rasio */
+  margin-right: 10px; /* Beri jarak dengan konten */
+  border-radius: 5px; /* Tambahkan sudut melengkung jika diperlukan */
+  object-fit: cover; /* Pastikan gambar terpotong dengan proporsional */
+}
+
+.card-body {
+  flex: 1; /* Isi ruang yang tersisa di kartu */
 }
 
 .card:hover {

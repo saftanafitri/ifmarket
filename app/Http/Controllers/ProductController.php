@@ -44,15 +44,28 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|integer',
+            'description' => 'required|string',
+            'seller_name' => 'required|array', // Pastikan seller_name adalah array
+            'videoLink' => 'nullable|url',
+            'email' => 'required|email',
+            'instagram' => 'nullable|url',
+            'linkedin' => 'nullable|url',
+            'github' => 'nullable|url',
+            'productLink' => 'required|url',
             'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
         ]);
-
-        // Menyimpan produk
+    
+        // Ubah array menjadi JSON string sebelum disimpan
+        $sellerNames = implode(', ', $request->seller_name);
+    
+        // Simpan data produk
         $product = Product::create([
             'name' => $request->name,
             'category_id' => $request->category_id,
             'description' => $request->description,
-            'seller_name' => $request->seller_name,
+            'seller_name' => $sellerNames, // Simpan dalam format string
             'video' => $request->videoLink,
             'email' => $request->email,
             'instagram' => $request->instagram,
@@ -60,19 +73,18 @@ class ProductController extends Controller
             'github' => $request->github,
             'product_link' => $request->productLink
         ]);
-
-        
-        // Photo ini akan di masukkan kedalam product id;
+    
+        // Simpan foto produk
         if ($request->hasFile('productPhotos')) {
             $images = $request->file('productPhotos');
-
+    
             foreach ($images as $image) {
                 // Generate nama file unik
                 $fileName = $product->id . '-' . time() . '.' . $image->getClientOriginalExtension();
-
-                // Simpan ke folder private/publik
-                $imagePath = $image->storeAs('public', $fileName, 'private');
-
+    
+                // Simpan ke folder storage
+                $imagePath = $image->storeAs('private/public', $fileName);
+    
                 // Simpan informasi gambar ke database
                 Photo::create([
                     'product_id' => $product->id,
@@ -80,21 +92,29 @@ class ProductController extends Controller
                 ]);
             }
         }
+    
         return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
-    }      
-
+    }
+    
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        // Retrieve product by ID
-        $product = Product::findOrFail($id);
-
-        // Send data to the view
-        return view('detailsproduct.details', compact('product'));
+        // Ambil produk berdasarkan ID
+        $product = Product::with(['category', 'photos'])->findOrFail($id);
+    
+        // Ambil produk terkait berdasarkan kategori yang sama, kecuali produk yang sedang ditampilkan
+        $relatedProducts = Product::with('photos')
+            ->where('category_id', $product->category_id) // Filter kategori yang sama
+            ->where('id', '!=', $product->id) // Kecualikan produk yang sedang dilihat
+            ->take(3) // Batasi jumlah produk terkait
+            ->get();
+    
+        // Kirim data ke view
+        return view('detailsproduct.details', compact('product', 'relatedProducts'));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */

@@ -16,16 +16,19 @@ class HomeController extends Controller
     {
         // Ambil semua produk
         $products = Product::with(['category', 'photos'])->get();
-
+        
+        // Ambil maksimal 3 produk terbaru tanpa filter kategori
         $latestProducts = Product::with('photos')
-            ->latest()
+            ->latest() // Urutkan berdasarkan waktu terbaru
+            ->take(3) // Ambil maksimal 3 produk
             ->get();
-    
+        
         // Kategori aktif default adalah "All"
         $activeCategory = 'All';
-    
+        
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
+    
     
     /**
      * Show the form for creating a new resource.

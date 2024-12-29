@@ -25,7 +25,7 @@
                 </h1>
             </div>
             <div class="input-group w-50">
-                @if(Route::currentRouteName() == 'index')
+                @if(Route::currentRouteName() == 'home.index')
                 <input type="text" class="form-control" placeholder="Search for anything...">
                 <button class="search-btn">
                     <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" alt="Search Icon">

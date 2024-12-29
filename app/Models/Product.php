@@ -25,6 +25,10 @@ class Product extends Model
         'category_id',
     ];
 
+    protected $casts = [
+        'seller_name' => 'array',  
+    ];
+
 
     public function photos()
     {

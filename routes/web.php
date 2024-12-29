@@ -79,6 +79,7 @@ Route::get('/product/manage', function () {
     return view('manageproduct');
 })->name('manageProduct');
 
+
 Route::get('/storage/private/{path}', function ($path) {
     $filePath = "private/{$path}";
 
@@ -90,4 +91,3 @@ Route::get('/storage/private/{path}', function ($path) {
     // Sajikan file
     return response()->file(storage_path("app/{$filePath}"));
 })->where('path', '.*')->name('private.file');
-

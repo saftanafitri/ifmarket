@@ -156,75 +156,34 @@
 
         <!-- Related Products -->
         <div class="container py-5">
-            <h2>Related Product</h2>
+            <h2>Related Products</h2>
             <div class="row">
-                <!-- Card 1 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="https://via.placeholder.com/150" class="card-img-left" alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Curabitur pulvinar aliquam lectus</h5>
-                                <p class="card-text">Non blandit erat mattis vitae.</p>
-                                <div class="d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                        fill="currentColor" class="bi bi-person-circle me-2 text-dark" viewBox="0 0 16 16">
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path fill-rule="evenodd"
-                                            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                    <span>Saftana Fitri</span>
+                @forelse($relatedProducts as $related)
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="d-flex">
+                                @if ($related->photos->isNotEmpty())
+                                    <img src="{{ route('private.file', ['path' => 'public/' . $related->photos->first()->url]) }}" 
+                                         class="card-img-left"
+                                         alt="{{ $related->name }}">
+                                @else
+                                    <img src="https://via.placeholder.com/150" 
+                                         class="card-img-left" 
+                                         alt="No Image Available">
+                                @endif
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $related->name }}</h5>
+                                    <p class="card-text">{{ Str::limit($related->description, 50) }}</p>
+                                    <a href="{{ route('products.show', $related->id) }}" class="btn btn-primary btn-sm">View Details</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="https://via.placeholder.com/150" class="card-img-left" alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Curabitur pulvinar aliquam lectus</h5>
-                                <p class="card-text">Non blandit erat mattis vitae.</p>
-                                <div class="d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                        fill="currentColor" class="bi bi-person-circle me-2 text-dark"
-                                        viewBox="0 0 16 16">
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path fill-rule="evenodd"
-                                            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                    <span>Saftana Fitri</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="https://via.placeholder.com/150" class="card-img-left" alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Curabitur pulvinar aliquam lectus</h5>
-                                <p class="card-text">Non blandit erat mattis vitae.</p>
-                                <div class="d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                        fill="currentColor" class="bi bi-person-circle me-2 text-dark"
-                                        viewBox="0 0 16 16">
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path fill-rule="evenodd"
-                                            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                    <span>Saftana Fitri</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <p>No related products found.</p>
+                @endforelse
             </div>
         </div>
-    </section>
+            </section>
 @endsection
 
