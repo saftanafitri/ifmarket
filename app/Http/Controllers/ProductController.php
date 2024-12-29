@@ -201,8 +201,6 @@ class ProductController extends Controller
             ->take(3)
             ->get();
         } else {
-            // Jika kategori "All", ambil semua produk
-            $products = Product::with(['category', 'photos'])->get();
     
             // Ambil maksimal 3 produk terbaru tanpa filter kategori
             $latestProducts = Product::with('photos')
