@@ -2,6 +2,8 @@
 !.gitignore
 !public/
 !private/
-!private/public/*
-!storage/app/private/public/
+!private/public/
 !storage/app/private/public/*
+!*.jpg
+!*.jpeg
+!*.png
