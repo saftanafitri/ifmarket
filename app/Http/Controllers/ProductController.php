@@ -184,17 +184,17 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
 
-    public function filter($category = 'All')
+    public function filter($Category = 'All')
     {
         // Ambil produk berdasarkan kategori
-        if ($category !== 'All') {
-            $products = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', $category);
+        if ($Category !== 'All') {
+            $products = Product::whereHas('category', function ($query) use ($Category) {
+                $query->where('name', $Category);
             })->with(['category', 'photos'])->get();
     
             // Ambil maksimal 3 produk terbaru berdasarkan kategori
-            $latestProducts = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', $category);
+            $latestProducts = Product::whereHas('category', function ($query) use ($Category) {
+                $query->where('name', $Category);
             })
             ->with('photos')
             ->latest()
@@ -210,7 +210,7 @@ class ProductController extends Controller
         }
     
         // Kirimkan kategori aktif untuk menyesuaikan tombol
-        $activeCategory = $category;
+        $activeCategory = $Category;
     
         // Kirim data ke view
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
