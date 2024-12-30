@@ -186,8 +186,8 @@ class ProductController extends Controller
 
     public function filter($Category = 'All')
     {
-        // Ambil produk berdasarkan kategori
         if ($Category !== 'All') {
+            // Ambil produk berdasarkan kategori
             $products = Product::whereHas('category', function ($query) use ($Category) {
                 $query->where('name', $Category);
             })->with(['category', 'photos'])->get();
@@ -201,7 +201,9 @@ class ProductController extends Controller
             ->take(3)
             ->get();
         } else {
-    
+            // Ambil semua produk tanpa filter kategori
+            $products = Product::with(['category', 'photos'])->get();
+        
             // Ambil maksimal 3 produk terbaru tanpa filter kategori
             $latestProducts = Product::with('photos')
                 ->latest()
@@ -215,5 +217,4 @@ class ProductController extends Controller
         // Kirim data ke view
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
-
-}
+}    
