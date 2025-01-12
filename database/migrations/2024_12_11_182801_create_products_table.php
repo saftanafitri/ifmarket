@@ -10,9 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {    
             $table->id(); // 1
             $table->string('name'); // Product name
+            $table->string('slug')->nullable()->unique();
             $table->string('video')->nullable(); // String column for a single video path
             $table->text('description'); // Product description
             $table->string('seller_name'); // Seller name

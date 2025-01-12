@@ -4,30 +4,34 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+
 /*
-|---------------------------------------------------------------------------
-| Rute untuk Produk
-|---------------------------------------------------------------------------
+|---------------------------------------------------------------------------|
+| Rute untuk Produk                                                           |
+|---------------------------------------------------------------------------|
 */
 
 // Rute untuk daftar produk berdasarkan kategori
 Route::get('/products/category/{category?}', [ProductController::class, 'filter'])->name('products.filter');
+
 // Menampilkan semua produk
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
 // Menampilkan detail produk berdasarkan nama
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-// Membuat produk baru
-Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-Route::post('products', [ProductController::class, 'store'])->name('products.store');
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+
 // Sumber daya produk (CRUD)
-//Route::resource('products', ProductController::class);
+// Route::resource('products', ProductController::class);
+
+// Tambahan rute add product
 Route::get('addproduct', [ProductController::class, 'create'])->name('products.create');
 
 /*
-|---------------------------------------------------------------------------
-| Rute untuk Halaman Statis
-|---------------------------------------------------------------------------
+|---------------------------------------------------------------------------|
+| Rute untuk Halaman Statis                                                   |
+|---------------------------------------------------------------------------|
 */
 
 // Rute untuk landing page
@@ -44,41 +48,51 @@ Route::get('/detail', function () {
 })->name('detail');
 
 /*
-|---------------------------------------------------------------------------
-| Rute untuk Autentikasi
-|---------------------------------------------------------------------------
+|---------------------------------------------------------------------------|
+| Rute untuk Autentikasi                                                      |
+|---------------------------------------------------------------------------|
 */
 
+// Group Auth
 Route::prefix('auth')->group(function () {
-    // Login
+    // Halaman Login
     Route::get('/login', function () {
-        return view('auth.login');
+        return view('auth.login'); // Menampilkan halaman login
     })->name('login');
 
-    Route::post('/login', function () {
-        return redirect()->route('index'); // Redirect ke halaman beranda setelah login
-    })->name('login.submit');
+    // Login Submission
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
-    // Register
-    Route::get('/register', function () {
-        return view('auth.register');
-    })->name('register');
-
-    Route::post('/register', function () {
-        return redirect()->route('login'); // Redirect ke halaman login setelah register
-    })->name('register.submit');
+    // Logout
+    Route::post('/logout', function () {
+        session()->forget(['is_logged_in', 'nim']); // Hapus status login dan NIM dari session
+        return redirect()->route('login'); // Redirect ke halaman login
+    })->name('logout');
 });
 
 /*
-|---------------------------------------------------------------------------
-| Rute untuk Manajemen Produk
-|---------------------------------------------------------------------------
+|---------------------------------------------------------------------------|
+| Rute untuk Manajemen Produk                                                |
+|---------------------------------------------------------------------------|
 */
 
-Route::get('/product/manage', function () {
-    return view('manageproduct');
-})->name('manageProduct');
+// Gunakan Middleware untuk melindungi rute yang membutuhkan login
+Route::middleware(['auth'])->group(function () {
+    // Membuat produk baru
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    
+    // Halaman untuk mengelola produk
+    Route::get('/product/manage', function () {
+        return view('products.manageproduct');
+    })->name('manageProduct');
+});
 
+/*
+|---------------------------------------------------------------------------|
+| Rute untuk mengakses file di storage                                        |
+|---------------------------------------------------------------------------|
+*/
 
 Route::get('/storage/private/{path}', function ($path) {
     $filePath = "private/{$path}";

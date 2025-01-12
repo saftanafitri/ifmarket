@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Teknik Informatika')</title>
+    <title>@yield('title', 'Sakti Product')</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/icontrash.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('detailproduk/detailproduk.css') }}">
+    <link rel="stylesheet" href="{{ asset('index/index.css') }}">
 </head>
     
 <body>
@@ -17,11 +18,11 @@
     <header class="bg-custom py-3">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-                <img src="{{ asset('images/LogoIF.png') }}" alt="Teknik Informatika" class="me-2"
+                <img src="{{ asset('images/saktilogo.png') }}" alt="Sakti Product" class="me-2"
                     style="width: 70px;">
                 <h1 class="h4 m-0 text-center">
-                    <span class="d-block">TEKNIK</span>
-                    <span class="d-block">INFORMATIKA</span>
+                    <span class="d-block">SAKTI</span>
+                    <span class="d-block">PRODUCT</span>
                 </h1>
             </div>
             <div class="input-group w-50">
@@ -43,27 +44,20 @@
                 </div>
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    @if(Route::currentRouteName() == 'home.index')
-                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
-                    <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
-                    @elseif (Route::currentRouteName() == 'addProduct')
-                    <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
-                    <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
-                    @elseif (Route::currentRouteName() == 'manageProduct')
-                    <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
-                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
-                    @elseif (Route::currentRouteName() == 'detail')
-                    <li><a class="dropdown-item" href="{{ route('index') }}">Home</a></li>
-                    <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
-                    <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
+                    @if(session('is_logged_in', false))
+                        <!-- Opsi untuk pengguna yang sudah login -->
+                        <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
+                        <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     @else
-                    <li><a class="dropdown-item" href="{{ route('home.index') }}">Home</a></li>
-                    <li>@endif
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <!-- Opsi untuk pengguna yang belum login -->
+                        <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
+                    @endif
                 </ul>
-            </div>
+            </div>                        
         </div>
         </div>
     </header>

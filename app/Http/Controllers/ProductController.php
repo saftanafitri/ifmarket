@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Seller;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Models\Photo;
+use Illuminate\Support\Str;
+
 
 class ProductController extends Controller
 {
@@ -16,19 +18,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Ambil semua produk
-        $products = Product::with(['category', 'photos'])->get();
-    
-        // Ambil maksimal 3 produk terbaru tanpa filter kategori
-        $latestProducts = Product::with('photos')
-            ->latest()
-            ->get();
-    
-        // Kategori aktif default adalah "All"
+        $products = Product::with(['sellers', 'photos', 'category'])->get();
+        $latestProducts = Product::latest()->with('photos')->take(3)->get();
         $activeCategory = 'All';
-    
+
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -47,141 +43,77 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'category_id' => 'required|integer',
             'description' => 'required|string',
-            'seller_name' => 'required|array', // Pastikan seller_name adalah array
+            'seller_name' => 'required|array|min:1',
+            'seller_name.*' => 'string|max:255',
             'videoLink' => 'nullable|url',
             'email' => 'required|email',
             'instagram' => 'nullable|url',
             'linkedin' => 'nullable|url',
             'github' => 'nullable|url',
-            'productLink' => 'required|url',
-            'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
+            'product_link' => 'required|url',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
     
-        // Ubah array menjadi JSON string sebelum disimpan
-        $sellerNames = implode(', ', $request->seller_name);
+        // Generate slug dari nama produk
+        $slug = Str::slug($request->name);
     
-        // Simpan data produk
-        $product = Product::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'description' => $request->description,
-            'seller_name' => $sellerNames, // Simpan dalam format string
-            'video' => $request->videoLink,
-            'email' => $request->email,
-            'instagram' => $request->instagram,
-            'linkedin' => $request->linkedin,
-            'github' => $request->github,
-            'product_link' => $request->productLink
-        ]);
+        // Simpan produk dengan slug
+        $product = Product::create(array_merge(
+            $request->only([
+                'name', 'category_id', 'description', 'video', 'email', 'instagram', 'linkedin', 'github', 'product_link'
+            ]),
+            [
+                'seller_name' => $request->seller_name[0],
+                'slug' => Str::slug($request->name),
+                'video' => $request->videoLink
+            ]
+        ));
+    
+        // Simpan data seller ke tabel sellers
+        foreach ($request->seller_name as $sellerName) {
+            Seller::create([
+                'product_id' => $product->id,
+                'name' => $sellerName,
+            ]);
+        }
     
         // Simpan foto produk
         if ($request->hasFile('productPhotos')) {
-            $images = $request->file('productPhotos');
-    
-            foreach ($images as $image) {
-                // Generate nama file unik
-                $fileName = $product->id . '-' . time() . '.' . $image->getClientOriginalExtension();
-    
-                // Simpan ke folder storage
+            foreach ($request->file('productPhotos') as $image) {
+                $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
                 $imagePath = $image->storeAs('private/public', $fileName);
     
-                // Simpan informasi gambar ke database
                 Photo::create([
                     'product_id' => $product->id,
-                    'url' => $fileName, // Simpan path relatif
+                    'url' => $fileName,
                 ]);
             }
         }
     
         return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
-    }
-    
+    }    
+
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($slug)
     {
-        // Ambil produk berdasarkan ID
-        $product = Product::with(['category', 'photos'])->findOrFail($id);
-    
-        // Ambil produk terkait berdasarkan kategori yang sama, kecuali produk yang sedang ditampilkan
+        $product = Product::with(['category', 'photos', 'sellers'])->where('slug', $slug)->firstOrFail();
         $relatedProducts = Product::with('photos')
-            ->where('category_id', $product->category_id) // Filter kategori yang sama
-            ->where('id', '!=', $product->id) // Kecualikan produk yang sedang dilihat
-            ->take(3) // Batasi jumlah produk terkait
+            ->where('category_id', $product->category_id)
+            ->where('slug', '!=', $product->slug)
+            ->take(3)
             ->get();
-    
-        // Kirim data ke view
-        return view('detailsproduct.details', compact('product', 'relatedProducts'));
-    }
-    
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        // Retrieve the product by ID
-        $product = Product::findOrFail($id);
-        return view('products.edit', compact('product'));
+
+        $youtubeID = $this->parseYoutubeID($product->video);
+
+        return view('detailsproduct.details', compact('product', 'relatedProducts', 'youtubeID'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
+    private function parseYoutubeID($url)
     {
-        // Find the product by ID
-        $product = Product::findOrFail($id);
-
-        // Validate data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'productPhotos' => 'nullable|array|max:9',
-            'productPhotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Only images
-        ]);
-
-        // Update product photos
-        $photoPaths = json_decode($product->photos, true) ?: [];
-        if ($request->hasFile('productPhotos')) {
-            // Delete old photos (optional)
-            foreach ($photoPaths as $photo) {
-                Storage::disk('public')->delete($photo);
-            }
-
-            // Store new photos
-            $photoPaths = [];
-            foreach ($request->file('productPhotos') as $file) {
-                $photoPaths[] = $file->store('products/photos', 'public');
-            }
-        }
-
-        // Update product data
-        $product->update([
-            'name' => $request->input('name'),
-            'photos' => json_encode($photoPaths), // Update photos path as JSON
-        ]);
-
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        // Find the product by ID
-        $product = Product::findOrFail($id);
-
-        // Delete associated photos
-        $photoPaths = json_decode($product->photos, true) ?: [];
-        foreach ($photoPaths as $photo) {
-            Storage::disk('public')->delete($photo);
-        }
-
-        // Delete the product
-        $product->delete();
-
-        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+        preg_match('/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
+        return $matches[1] ?? null;
     }
 
     public function filter($Category = 'All')
@@ -217,4 +149,82 @@ class ProductController extends Controller
         // Kirim data ke view
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
-}    
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $product = Product::with('sellers')->findOrFail($id);
+        $categories = DB::table('categories')->get();
+        return view('products.edit', compact('product', 'categories'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+    
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|integer',
+            'description' => 'required|string',
+            'seller_name' => 'required|array|min:1', // Validasi array seller
+            'seller_name.*' => 'string|max:255',
+            'product_link' => 'required|url',
+            'productPhotos.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+    
+        // Update data produk
+        $product->update($request->only([
+            'name', 'category_id', 'description', 'email', 'instagram', 'linkedin', 'github', 'product_link', 'video'
+        ]));
+    
+        // Update data seller
+        Seller::where('product_id', $product->id)->delete();
+        foreach ($request->seller_name as $sellerName) {
+            Seller::create([
+                'product_id' => $product->id,
+                'name' => $sellerName,
+            ]);
+        }
+    
+        // Update foto produk
+        if ($request->hasFile('productPhotos')) {
+            Photo::where('product_id', $product->id)->delete();
+            foreach ($request->file('productPhotos') as $image) {
+                $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->storeAs('public/products', $fileName);
+    
+                Photo::create([
+                    'product_id' => $product->id,
+                    'url' => $fileName,
+                ]);
+            }
+        }
+    
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+    }
+    
+
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $product = Product::with(['photos', 'sellers'])->findOrFail($id);
+
+        foreach ($product->photos as $photo) {
+            Storage::disk('public')->delete($photo->url);
+        }
+
+        $product->photos()->delete();
+        $product->sellers()->delete();
+        $product->delete();
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+}

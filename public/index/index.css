@@ -1,0 +1,23 @@
+#category-select {
+    background-color: #f8d219; /* Warna latar dropdown */
+    color:#000; /* Warna teks */
+    border: 2px solid #f1c40f; /* Garis tepi kuning */
+    border-radius: 5px; /* Membulatkan sudut */
+    padding: 5px; /* Jarak teks ke tepi */
+    font-size: 16px; /* Ukuran teks */
+}
+
+#category-select option {
+    background-color: #f8d219; /* Warna latar untuk opsi */
+    color: #000; /* Warna teks */
+}
+.card-img-top {
+    width: 100%; /* Memastikan lebar gambar mengikuti lebar kartu */
+    height: 75px; /* Tetapkan tinggi tetap untuk gambar */
+    object-fit: cover; /* Memastikan gambar tetap terlihat bagus dengan cropping jika perlu */
+}
+.card-img {
+    width: 100%; /* Mengatur lebar gambar sesuai dengan kartu */
+    height: 200px; /* Menetapkan tinggi tetap untuk gambar */
+    object-fit: cover; /* Menjaga rasio aspek dan memotong bagian yang tidak sesuai */
+}

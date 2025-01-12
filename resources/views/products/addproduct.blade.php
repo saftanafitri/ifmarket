@@ -95,17 +95,17 @@
 
                     // Perbarui label jumlah foto
                     photoLabelText.textContent = `${uploadedFiles.length}/9`;
-}
-        </script>
+                }
+            </script>
 
-        <div class="mb-3">
+            <div class="mb-3">
             <label for="videoLink" class="form-label">
-                Link Video Produk<span class="text-danger">*</span>
+                Link Video Produk<span class="text-muted"> (Opsional)</span>
             </label>
             <input type="url" class="form-control border-warning" id="videoLink" name="videoLink"
-                placeholder="Masukkan URL video YouTube" value="{{ old('videoLink') }}" required>
+                placeholder="Masukkan URL video YouTube" value="{{ old('videoLink') }}">
             <small id="videoLinkHelp" class="form-text text-muted">
-                Masukkan URL video dari YouTube.
+                Masukkan URL video dari YouTube (opsional).
             </small>
             <!-- Tempat untuk menampilkan pratinjau video -->
             <div id="videoPreviewContainer" class="mt-3">
@@ -208,7 +208,6 @@
                 <button type="button" class="btn btn-warning" onclick="addSeller()">Tambah</button>
             </div>
         </div>
-        
 
         <script>
             let sellerCount = document.querySelectorAll('.seller-item').length || 1;
@@ -241,8 +240,7 @@
                 } else {
                     alert('Minimal harus ada satu penjual.');
                 }
-}
-
+            }
                 </script>
                 
             <div class="mb-3">
@@ -262,12 +260,12 @@
             </div>
 
             <div class="mb-3">
-                <label for="productLink" class="form-label">
+                <label for="product_link" class="form-label">
                     Link Produk<span class="text-danger">*</span>
                 </label>
-                <input type="url" class="form-control border-warning" id="productLink" name="productLink"
-                    placeholder="Dapat berupa prototipe atau produk jadi" value="{{ old('productLink') }}" required>
-                <small id="productLinkHelp" class="form-text text-muted">
+                <input type="url" class="form-control border-warning" id="product_link" name="product_link"
+                    placeholder="Dapat berupa prototipe atau produk jadi" value="{{ old('product_link') }}" required>
+                <small id="product_linkHelp" class="form-text text-muted">
                     Masukkan URL yang valid untuk produk Anda, baik berupa prototipe maupun produk jadi.
                 </small>
             </div>

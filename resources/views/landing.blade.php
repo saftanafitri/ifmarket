@@ -4,105 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sakti Market</title>
+    <title>Sakti Product</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(120deg, #111, #111, #f8d219);
-            color: #fff;
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 20px; /* Removed padding from top and bottom */
-        }
-
-        .hero img {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            object-fit: contain; /* Ensure the image is fully visible */
-            border-radius: 5px;
-            margin-right: 5px; /* Added a small margin to the right */
-        }
-        .text-slider {
-            display: inline-block;
-            overflow: hidden;
-            vertical-align: top;
-            height: 1.2em;
-        }
-
-        .text-slider span {
-            display: inline-block;
-            padding-left: 10px;
-            animation: slide 6s infinite;
-        }
-
-        @keyframes slide {
-            0%,
-            20% {
-                transform: translateY(0);
-            }
-
-            25%,
-            45% {
-                transform: translateY(-1.2em);
-            }
-
-            50%,
-            70% {
-                transform: translateY(-2.4em);
-            }
-
-            75%,
-            100% {
-                transform: translateY(0);
-            }
-        }
-
-        .cta .btn-warning {
-            background-color: #fff; /* Warna putih default */
-            color: #000; /* Warna teks hitam default */
-            border: none; /* Hilangkan border */
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 5px;
-            padding: 1rem 2rem;
-            transition: background-color 0.3s, color 0.3s; /* Tambahkan transisi */
-        }
-
-        .cta .btn-warning:hover {
-            background-color: #f8d219; /* Warna kuning saat hover */
-            color: #000; /* Tetap warna teks hitam */
-        }
-
-        .description {
-            margin-top: 20px;
-            font-size: 1rem;
-            color: #f9f8db;
-        }
-
-        @media (max-width: 768px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .hero img {
-                margin-bottom: 20px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('landing/landing.css') }}">
 </head>
 
 <body>

@@ -1,9 +1,9 @@
 *
-!.gitignore
-!public/
 !private/
+!public/
 !private/public/
-!storage/app/private/public/*
+!.gitignore
+!storage/app/private/public/
 !*.jpg
 !*.jpeg
 !*.png

@@ -1,3 +1,4 @@
+/* Background dan Font */
 body {
   background-color: #f9f8db;
   font-family: Arial, sans-serif;
@@ -34,6 +35,30 @@ header h1 span {
   height: 20px;
 }
 
+/* Kontainer Profil */
+.profile-container {
+  margin-top: 10px;
+}
+
+/* Kontainer Info Profil */
+.profile-info {
+  display: flex; /* Menggunakan Flexbox untuk tata letak sejajar */
+  align-items: center; /* Vertikal rata tengah */
+}
+
+/* Ikon Profil */
+.profile-info svg {
+  width: 17px;
+  height: 15px;
+  color: #000;
+}
+
+/* Nama Profil */
+.profile-name {
+  font-size: 1rem;
+  color: #333;
+}
+
 /* Daftar Tanpa Garis */
 .list-unstyled li a {
   color: #000;
@@ -47,49 +72,48 @@ header h1 span {
 /* Kartu Produk */
 .card {
   background-color: #f8d219;
-  border-radius: 0px;
+  border-radius: 3px;
   padding: 15px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  display: flex; /* Atur layout flex untuk gambar dan teks */
-  align-items: center; /* Rata tengah secara vertikal */
-  padding: 10px;
+  text-align: left; /* Konten rata kiri */
 }
 
-.card .card-img-left {
-  width: 150px; /* Atur lebar gambar */
-  height: auto; /* Pertahankan aspek rasio */
-  margin-right: 10px; /* Beri jarak dengan konten */
-  border-radius: 5px; /* Tambahkan sudut melengkung jika diperlukan */
-  object-fit: cover; /* Pastikan gambar terpotong dengan proporsional */
-}
-
-.card-body {
-  flex: 1; /* Isi ruang yang tersisa di kartu */
-}
-
-.card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
+/* Gambar Produk */
 .card-img-top {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  width: 100%; /* Gambar penuh selebar kolom */
+  height: auto; /* Pertahankan aspek rasio */
+  border-radius: 5px;
+  object-fit: cover; /* Jaga proporsi gambar */
 }
 
-.card-title{
-  font-size: 1.2rem;
-  color: #000;
-  margin: 0;
-  text-align: left;
-  padding-left: 0; /* Jarak dari sisi kiri */
+/* Konten Kartu */
+.card-body {
+  margin-top: 10px; /* Beri jarak antara gambar dan konten */
 }
 
-.card .author {
-  font-size: 0.9rem;
+.card-title {
+  font-size: 1rem;
+  font-weight: bold;
   color: #000;
+  margin-bottom: 5px;
+}
+
+.card-text {
+  color: #333;
   margin-bottom: 15px;
-  text-align: left;
-  padding-left: 0; /* Jarak dari sisi kiri */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
 }
 
 /* Dropdown Menu */
@@ -100,25 +124,20 @@ header h1 span {
 
 /* Tombol Custom */
 .custom-btn {
-  background-color: #fff; /* Warna putih default */
+  background-color: #fff;
   color: #000;
-  border: none solid #f8d219;
-  font-size: 0.9rem;
+  border: 1px solid #f8d219;
+  font-size: 0.8rem;
   border-radius: 10px;
-  transition: all 0.3s ease;
-  text-align: left;
-  padding: 5px 10px; /* Padding vertikal dan horizontal */
-  line-height: 1; /* Sesuaikan untuk posisi teks */
-  display: inline-block; /* Pastikan properti tinggi fleksibel */
-  margin-left: 10px; /* Geser ke kanan dengan margin */
-  transition: background-color 0.3s, color 0.3s; /* Tambahkan transisi */
+  text-align: center;
+  padding: 5px 10px;
+  margin-left: 0.5px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .custom-btn:hover {
   background-color: #f8d219;
   color: #f9f8db;
-  border: 2px solid #f9f8db;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 /* Tabel */
@@ -130,15 +149,19 @@ header h1 span {
 
 /* Responsif */
 @media (max-width: 768px) {
-  h1 span, h2 {
+  h1 span,
+  h2 {
     font-size: 1.2rem;
   }
+
   .card {
     margin-bottom: 20px;
   }
+
   .dropdown-menu {
     font-size: 0.9rem;
   }
+
   .search-btn {
     width: 100%;
     justify-content: center;
@@ -186,6 +209,8 @@ header h1 span {
 .img-thumbnail:hover {
   transform: scale(1.1);
 }
+
+/* Tombol Kustom */
 .btn-custom {
   background-color: transparent;
   color: #000;
@@ -196,13 +221,14 @@ header h1 span {
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
+
 .btn-custom:hover {
   background-color: #ffcc00;
 }
 
+/* Footer */
 footer {
   background-color: #f8d219;
   color: #000;
-  text-align: align;
   padding: 20px;
 }
