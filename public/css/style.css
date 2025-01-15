@@ -76,12 +76,15 @@ header h1 span {
   padding: 15px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   text-align: left; /* Konten rata kiri */
+  height: auto;
+  width: 100%; /* Gambar penuh selebar kolom */
+  object-fit: cover; /* Jaga proporsi gambar */
 }
 
 /* Gambar Produk */
 .card-img-top {
   width: 100%; /* Gambar penuh selebar kolom */
-  height: auto; /* Pertahankan aspek rasio */
+  height: 100%; /* Pertahankan aspek rasio */
   border-radius: 5px;
   object-fit: cover; /* Jaga proporsi gambar */
 }
@@ -103,17 +106,21 @@ header h1 span {
   margin-bottom: 15px;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
+.btn-custom {
+  background-color: #fff;
+  color: black;
+  border: 1px solid #f8d219;
+  padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 10px;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #f8d219;
+  color: #f9f8db;
 }
 
 /* Dropdown Menu */

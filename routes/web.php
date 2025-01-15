@@ -25,9 +25,6 @@ Route::get('/products/{slug}', [ProductController::class, 'show'])->name('produc
 // Sumber daya produk (CRUD)
 // Route::resource('products', ProductController::class);
 
-// Tambahan rute add product
-Route::get('addproduct', [ProductController::class, 'create'])->name('products.create');
-
 /*
 |---------------------------------------------------------------------------|
 | Rute untuk Halaman Statis                                                   |
@@ -55,8 +52,8 @@ Route::get('/detail', function () {
 
 // Group Auth
 Route::prefix('auth')->group(function () {
-    // Halaman Login
-    Route::get('/login', function () {
+    // Halaman Login hanya dapat diakses oleh pengguna yang belum login (guest)
+    Route::middleware('guest')->get('/login', function () {
         return view('auth.login'); // Menampilkan halaman login
     })->name('login');
 
@@ -65,10 +62,11 @@ Route::prefix('auth')->group(function () {
 
     // Logout
     Route::post('/logout', function () {
-        session()->forget(['is_logged_in', 'nim']); // Hapus status login dan NIM dari session
+        session()->forget(['is_logged_in', 'user_data']); // Hapus status login dan data pengguna dari session
         return redirect()->route('login'); // Redirect ke halaman login
     })->name('logout');
 });
+
 
 /*
 |---------------------------------------------------------------------------|
@@ -76,12 +74,13 @@ Route::prefix('auth')->group(function () {
 |---------------------------------------------------------------------------|
 */
 
+
 // Gunakan Middleware untuk melindungi rute yang membutuhkan login
 Route::middleware(['auth'])->group(function () {
     // Membuat produk baru
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('/product/addproduct', [ProductController::class, 'create'])->name('products.create');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-    
+
     // Halaman untuk mengelola produk
     Route::get('/product/manage', function () {
         return view('products.manageproduct');

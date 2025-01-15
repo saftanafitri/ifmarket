@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -19,17 +22,14 @@ class AuthController extends Controller
         // Ambil URL login dari .env
         $loginUrl = env('SALAM_API_LOGIN_URL');
 
-        // Periksa apakah URL login tersedia
         if (!$loginUrl) {
             return back()->withErrors(['error' => 'URL login tidak dikonfigurasi.']);
         }
 
-        // Log data request sebelum dikirim ke API
-        Log::info('Mengirim request ke SALAM API', [
-            'url' => $loginUrl,
-            'token' => env('SALAM_API_TOKEN'),
+                // Log request login
+        Log::info('Mengirim request login ke API Salam', [
             'username' => $credentials['username'],
-            'password' => $credentials['password'],
+            'login_url' => $loginUrl,
         ]);
 
         // Kirim permintaan POST ke API SALAM
@@ -43,36 +43,50 @@ class AuthController extends Controller
                 'password' => $credentials['password'],
             ]);
 
-        // Log respons dari API
-        Log::info('Respons dari SALAM API:', [
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
-        if ($response->successful()) {
-            // Jika login berhasil, ambil data dari response
-            $data = $response->json();
-
-            // Simpan data login ke session
-            session([
-                'is_logged_in' => true,
-                'user_data' => $data, // Simpan semua data user yang dikembalikan API
+            Log::info('Respons dari API SALAM:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
             ]);
 
-            // Redirect ke halaman home
+        if ($response->successful()) {
+            // Ambil data user dari response
+            $data = $response->json();
+
+            // Ambil data username dan password dari API
+            $apiUsername = $data['data']['username'];
+            $apiPassword = $credentials['password']; // Gunakan password asli dari input, API tidak mengembalikan password
+
+            // Simpan atau perbarui data pengguna di database
+            $user = User::updateOrCreate(
+                ['username' => $apiUsername], // Cek berdasarkan username
+                ['password' => Hash::make($apiPassword)] // Enkripsi password sebelum menyimpan
+            );
+
+            // Login pengguna menggunakan model User
+            Auth::login($user);
+
+            // Regenerasi session untuk keamanan
+            $request->session()->regenerate();
+
+            Log::info('Login berhasil', [
+                'user' => $user
+            ]);
+
             return redirect()->route('home.index')->with('success', 'Login berhasil!');
         } else {
-            // Jika login gagal
             return back()->withErrors(['error' => 'Login gagal, periksa username dan password.']);
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        // Hapus session login
-        session()->forget(['is_logged_in', 'user_data']);
+        // Hapus session dan logout
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        // Redirect ke halaman login
+        Log::info('User telah logout');
+
         return redirect()->route('login')->with('success', 'Logout berhasil!');
     }
 }

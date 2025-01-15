@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Seller;
 use App\Models\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -107,7 +108,7 @@ class ProductController extends Controller
 
         $youtubeID = $this->parseYoutubeID($product->video);
 
-        return view('detailsproduct.details', compact('product', 'relatedProducts', 'youtubeID'));
+        return view('products.details', compact('product', 'relatedProducts', 'youtubeID'));
     }
 
     private function parseYoutubeID($url)

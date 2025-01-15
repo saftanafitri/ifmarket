@@ -20,7 +20,7 @@
             <div class="d-flex align-items-center">
                 <img src="{{ asset('images/saktilogo.png') }}" alt="Sakti Product" class="me-2"
                     style="width: 70px;">
-                <h1 class="h4 m-0 text-center">
+                <h1 class="h4 m-0 ">
                     <span class="d-block">SAKTI</span>
                     <span class="d-block">PRODUCT</span>
                 </h1>
@@ -44,21 +44,20 @@
                 </div>
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    @if(session('is_logged_in', false))
-                        <!-- Opsi untuk pengguna yang sudah login -->
+                    @if(Auth::check())
                         <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                         <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
                     @else
-                        <!-- Opsi untuk pengguna yang belum login -->
                         <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
                     @endif
-                </ul>
-            </div>                        
-        </div>
+                </ul>                       
+            </div>
         </div>
     </header>
 

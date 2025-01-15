@@ -128,8 +128,7 @@
                                 <span class="profile-name">{{ $product->seller_name }}</span>
                             </div>
                         </div>
-                            <p class="card-text">{{ Str::limit($related->description, 50) }}</p>
-                            <a href="{{ route('products.show', $related->id) }}" class="btn btn-primary btn-sm">View Details</a>
+                            <a href="{{ route('products.show', $related->slug) }}" class="btn btn-primary btn-sm">View Details</a>
                         </div>
                     </div>
                 </div>

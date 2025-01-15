@@ -103,8 +103,8 @@
     
     /* Tombol Produk */
     .btn-custom {
-        background-color: #007bff;
-        color: white;
+        background-color: #f8d219;
+        color: black;
         padding: 10px 20px;
         border-radius: 5px;
         text-decoration: none;
@@ -114,7 +114,8 @@
     }
     
     .btn-custom:hover {
-        background-color: #0056b3;
+        background-color: white;
+        border: 2px solid #ffcc00;
     }
     
     /* Detail Produk */
