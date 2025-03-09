@@ -7,9 +7,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "intervention/image": "^3.10",
-        "laravel/fortify": "*",
+        "doctrine/dbal": "^4.2",
+        "intervention/image": "2.7",
         "laravel/framework": "^11.31",
+        "laravel/pail": "^1.0",
         "laravel/tinker": "^2.9",
         "symfony/polyfill-php80": "^1.31"
     },
