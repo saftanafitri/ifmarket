@@ -91,7 +91,7 @@ class ProductController extends Controller
             }
         }
     
-        return redirect()->route('products.index')->with('success', 'Produk berhasil disimpan.');
+        return redirect()->route('home.index')->with('success', 'Produk berhasil disimpan.');
     }    
 
     /**
@@ -151,6 +151,12 @@ class ProductController extends Controller
         return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
 
+
+    public function manageProducts()
+    {
+        $products = Product::with('photos')->get(); // Ambil data produk dan foto
+        return view('products.manageproduct', compact('products')); // Kirim ke view
+    }
     /**
      * Show the form for editing the specified resource.
      */

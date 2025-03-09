@@ -79,12 +79,10 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     // Membuat produk baru
     Route::get('/product/addproduct', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::post('/home/products', [ProductController::class, 'store'])->name('products.store');
 
     // Halaman untuk mengelola produk
-    Route::get('/product/manage', function () {
-        return view('products.manageproduct');
-    })->name('manageProduct');
+    Route::get('/product/manage', [ProductController::class, 'manageProducts'])->name('manageProduct');
 });
 
 /*

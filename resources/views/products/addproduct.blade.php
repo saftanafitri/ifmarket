@@ -78,7 +78,7 @@
                             <input type="text" class="form-control border-warning" 
                                    id="seller_name_{{ $index + 1 }}" 
                                    name="seller_name[]" 
-                                   placeholder="Input nama penjual" 
+                                   placeholder="Input nama pemilik produk" 
                                    value="{{ $sellerName }}" required>
                             <span class="remove-btn" onclick="removeSeller(this)" title="Hapus Penjual">&times;</span>
                         </div>

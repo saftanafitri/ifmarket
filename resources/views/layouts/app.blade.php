@@ -45,18 +45,21 @@
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                     @if(Auth::check())
+                        @if(in_array(Route::currentRouteName(), ['products.create', 'manageProduct']))
+                            <li><a class="dropdown-item" href="{{ route('home.index') }}">Home</a></li>
+                        @endif
                         <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
                         <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         </li>
                     @else
                         <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
                     @endif
-                </ul>                       
+                </ul>
+                   
             </div>
         </div>
     </header>
@@ -95,7 +98,7 @@
                     </ul>
                 </div>
             </div>
-            <p class="text-left mt-3">&copy; 2024 by Saftana Fitri</p>
+            <p class="text-left mt-3">&copy; Created by Saftana Fitri<br> Development by Rizkco Fauzan<br>Supported by Sakti Tech Support</p>
         </div>
     </footer>
 

@@ -128,12 +128,11 @@ function addSeller() {
     const newSeller = document.createElement('div');
     newSeller.classList.add('mb-3', 'seller-item');
     newSeller.innerHTML = `
-        <label class="form-label">Nama Pemilik Produk <span class="text-danger">*</span></label>
         <div class="d-flex">
             <input type="text" class="form-control border-warning" 
                 id="seller_name_${sellerCount}" 
                 name="seller_name[]" 
-                placeholder="Input nama penjual" 
+                placeholder="Input nama pemilik produk" 
                 required>
             <span class="remove-btn" onclick="removeSeller(this)" title="Hapus Penjual">&times;</span>
         </div>
