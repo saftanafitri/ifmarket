@@ -8,9 +8,7 @@
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
-            <label for="productPhotos" class="form-label">
-                Foto Produk <span class="text-danger">*</span>
-            </label>
+            <label for="productPhotos" class="form-label">Foto Produk <span class="text-danger">*</span></label>
             <div class="d-flex flex-wrap align-items-center" style="gap: 10px; overflow-x: auto;">
                 <!-- Add Photo Button -->
                 <div id="addPhotoBox" class="border border-warning rounded text-center py-3"
@@ -26,8 +24,6 @@
                 <div id="photoPreview" class="d-flex mb-3" style="gap: 10px;"></div>
             </div>
         </div>
-
-
             <div class="mb-3">
             <label for="videoLink" class="form-label">
                 Link Video Produk<span class="text-muted"> (Opsional)</span>

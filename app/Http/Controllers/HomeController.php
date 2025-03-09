@@ -4,31 +4,44 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHomeRequest;
 use App\Http\Requests\UpdateHomeRequest;
+use Illuminate\Http\Request;
 use App\Models\Home;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        // Ambil semua produk
-        $products = Product::with(['category', 'photos'])->get();
-        
-        // Ambil maksimal 3 produk terbaru tanpa filter kategori
-        $latestProducts = Product::with('photos')
-            ->latest() // Urutkan berdasarkan waktu terbaru
-            ->take(3) // Ambil maksimal 3 produk
-            ->get();
-        
-        // Kategori aktif default adalah "All"
-        $activeCategory = 'All';
-        
-        return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
-    }
-    
+    public function index(Request $request)
+{
+    $category = $request->query('category', 'All'); // Default 'All'
+
+    // Ambil semua produk (dengan filter kategori jika dipilih)
+    $products = Product::with(['category', 'sellers', 'photos'])
+        ->when($category !== 'All', function ($query) use ($category) {
+            return $query->whereHas('category', function ($q) use ($category) {
+                $q->where('name', $category);
+            });
+        })
+        ->paginate(12);
+
+    // Ambil produk terbaru berdasarkan filter kategori
+    $latestProducts = Product::with(['category', 'sellers', 'photos'])
+        ->when($category !== 'All', function ($query) use ($category) {
+            return $query->whereHas('category', function ($q) use ($category) {
+                $q->where('name', $category);
+            });
+        })
+        ->latest()
+        ->take(3)
+        ->get();
+
+    // Mengirim data ke view
+    return view('home.index', compact('products', 'latestProducts', 'category'));
+}   
     
     /**
      * Show the form for creating a new resource.
@@ -77,35 +90,29 @@ class HomeController extends Controller
     {
         //
     }
-    public function filter($category = 'All')
-    {
-        // Ambil produk berdasarkan kategori
-        if ($category !== 'All') {
-            $products = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', $category);
-            })->with(['category', 'photos'])->get();
-    
+        public function filter($Category = 'All')
+        {
+            if ($Category === 'All') {
+                return redirect()->route('home.index');
+            }
+
+            // Ambil produk berdasarkan kategori
+            $products = Product::whereHas('category', function ($query) use ($Category) {
+                $query->where('name', $Category);
+            })->with(['category', 'photos'])->paginate(12);
+
             // Ambil maksimal 3 produk terbaru berdasarkan kategori
-            $latestProducts = Product::whereHas('category', function ($query) use ($category) {
-                $query->where('name', $category);
+            $latestProducts = Product::whereHas('category', function ($query) use ($Category) {
+                $query->where('name', $Category);
             })
             ->with('photos')
             ->latest()
             ->take(3)
             ->get();
-        } else {
-    
-            // Ambil maksimal 3 produk terbaru tanpa filter kategori
-            $latestProducts = Product::with('photos')
-                ->latest()
-                ->take(3)
-                ->get();
-        }
-    
-        // Kirimkan kategori aktif untuk menyesuaikan tombol
-        $activeCategory = $category;
-    
-        // Kirim data ke view
-        return view('products.filter', compact('products', 'latestProducts', 'activeCategory'));
+
+            $activeCategory = $Category;
+
+            return view('home.index', compact('products', 'latestProducts', 'activeCategory'));
     }
+
 }

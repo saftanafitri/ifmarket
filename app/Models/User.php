@@ -12,7 +12,7 @@ class User extends Authenticatable
     /**
      * Kolom yang dapat diisi secara massal.
      */
-    protected $fillable = ['username', 'password'];
+    protected $fillable = ['username', 'password', 'role'];
 
     /**
      * Menyembunyikan atribut tertentu saat model diubah menjadi array atau JSON.
@@ -25,5 +25,10 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

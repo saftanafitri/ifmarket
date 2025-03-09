@@ -25,6 +25,12 @@ class Product extends Model
         'product_link',
         'category_id',
         'seller_name',
+        'status',
+        'user_id',
+    ];
+    
+    protected $cast = [
+        'status' => 'string',
     ];
 
     // Relasi ke tabel photos
@@ -42,6 +48,18 @@ class Product extends Model
     {
         return $this->hasMany(Seller::class, 'product_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+
 
     // Tambahkan logika otomatis untuk slug
     protected static function boot()

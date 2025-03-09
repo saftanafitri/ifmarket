@@ -2,41 +2,38 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AdminProductController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |---------------------------------------------------------------------------|
-| Rute untuk Produk                                                           |
+| Rute untuk Produk                                                         |
 |---------------------------------------------------------------------------|
 */
-
-// Rute untuk daftar produk berdasarkan kategori
-Route::get('/products/category/{category?}', [ProductController::class, 'filter'])->name('products.filter');
 
 // Menampilkan semua produk
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
-// Menampilkan detail produk berdasarkan nama
+Route::get('/products/category/{category}', [ProductController::class, 'filter'])->name('products.filter');
+Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
-
-// Sumber daya produk (CRUD)
-// Route::resource('products', ProductController::class);
+Route::get('/api/product/{slug}', [ProductController::class, 'getUpdatedProduct'])->name('api.product.details');
 
 /*
 |---------------------------------------------------------------------------|
-| Rute untuk Halaman Statis                                                   |
+| Rute untuk Halaman Statis                                                 |
 |---------------------------------------------------------------------------|
 */
 
-// Rute untuk landing page
+// Landing page
 Route::get('/', function () {
     return view('landing');
 })->name('index');
 
-// Rute untuk halaman home
+// Halaman home 
 Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 
 // Detail halaman statis
@@ -46,59 +43,74 @@ Route::get('/detail', function () {
 
 /*
 |---------------------------------------------------------------------------|
-| Rute untuk Autentikasi                                                      |
+| Rute untuk Autentikasi (Login & Logout)                                   |
 |---------------------------------------------------------------------------|
 */
 
-// Group Auth
 Route::prefix('auth')->group(function () {
-    // Halaman Login hanya dapat diakses oleh pengguna yang belum login (guest)
     Route::middleware('guest')->get('/login', function () {
-        return view('auth.login'); // Menampilkan halaman login
+        return view('auth.login');
     })->name('login');
 
-    // Login Submission
-    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+    Route::post('/login/admin', [AuthController::class, 'loginAdmin'])->name('login.admin');
+    Route::post('/login/user', [AuthController::class, 'loginUser'])->name('login.user');
+    Route::post('/login/api', [AuthController::class, 'loginApi'])->name('login.api');
 
-    // Logout
-    Route::post('/logout', function () {
-        session()->forget(['is_logged_in', 'user_data']); // Hapus status login dan data pengguna dari session
-        return redirect()->route('login'); // Redirect ke halaman login
-    })->name('logout');
+    Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 
 /*
 |---------------------------------------------------------------------------|
-| Rute untuk Manajemen Produk                                                |
+| Rute untuk Manajemen Produk (Hanya User yang Sudah Login)                 |
 |---------------------------------------------------------------------------|
 */
 
-
-// Gunakan Middleware untuk melindungi rute yang membutuhkan login
 Route::middleware(['auth'])->group(function () {
-    // Membuat produk baru
     Route::get('/product/addproduct', [ProductController::class, 'create'])->name('products.create');
     Route::post('/home/products', [ProductController::class, 'store'])->name('products.store');
-
-    // Halaman untuk mengelola produk
     Route::get('/product/manage', [ProductController::class, 'manageProducts'])->name('manageProduct');
+    Route::get('/products/{slug}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{slug}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{slug}/photos/{photoId}', [ProductController::class, 'deletePhoto'])->name('products.photos.delete');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
 
 /*
 |---------------------------------------------------------------------------|
-| Rute untuk mengakses file di storage                                        |
+| Rute untuk Admin (Hanya Bisa Diakses oleh Admin)                          |
 |---------------------------------------------------------------------------|
 */
 
-Route::get('/storage/private/{path}', function ($path) {
-    $filePath = "private/{$path}";
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/products', [AdminProductController::class, 'index'])->name('admin.products.index');
+    Route::get('/products/pending', [AdminProductController::class, 'pending'])->name('admin.products.pending');
+    Route::post('/products/{product}/approve', [AdminProductController::class, 'approve'])->name('admin.products.approve');
+    Route::post('/products/{product}/reject', [AdminProductController::class, 'reject'])->name('admin.products.reject');
+});
 
-    // Periksa apakah file ada
-    if (!Storage::disk('local')->exists($filePath)) {
-        abort(404, 'File not found.');
-    }
+/*
+|---------------------------------------------------------------------------|
+| Rute untuk Mengakses File di Storage                                      |
+|---------------------------------------------------------------------------|
+*/
 
-    // Sajikan file
-    return response()->file(storage_path("app/{$filePath}"));
-})->where('path', '.*')->name('private.file');
+// Route::get('/storage/private/{path}', function ($path) {
+//     $filePath = "private/{$path}";
+
+//     // Cek apakah file ada
+//     if (!Storage::exists($filePath)) {
+//         abort(404, 'File not found.');
+//     }
+
+//     // Hanya izinkan akses untuk format tertentu
+//     $allowedExtensions = ['jpg', 'jpeg', 'png'];
+//     $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+//     if (!in_array($extension, $allowedExtensions)) {
+//         abort(403, 'Access denied.');
+//     }
+
+//     // Kirim file sebagai response
+//     return Response::file(storage_path("app/{$filePath}"));
+// })->where('path', '.*')->name('private.file');

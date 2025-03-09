@@ -23,6 +23,9 @@ return new class extends Migration {
             $table->string('github')->nullable(); // GitHub link (nullable)
             $table->string('product_link'); // Product link (required)
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            // Menambahkan kolom user_id
+            $table->unsignedBigInteger('user_id'); // Kolom user_id untuk mengaitkan produk dengan user
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
