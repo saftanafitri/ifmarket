@@ -35,6 +35,8 @@ return [
             'root' => storage_path('app/private'),
             'serve' => true,
             'throw' => false,
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'private',
         ],
 
 

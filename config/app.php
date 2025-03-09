@@ -125,13 +125,10 @@ return [
     ],
 
 
-    'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
-
-        //  Fortify
-        App\Providers\FortifyServiceProvider::class,
+    'providers' => \Illuminate\Foundation\Providers\FoundationServiceProvider::defaultProviders()->merge([
+        
     ])->toArray(),
 
+ 
+    
 ];
