@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Produk - Teknik Informatika')
+@section('title', 'Sakti Produk - Edit Produk')
 
 @section('content')
 <section class="py-5">
