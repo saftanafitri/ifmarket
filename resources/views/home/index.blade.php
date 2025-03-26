@@ -1,7 +1,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Teknik Informatika')
+@section('title', 'Sakti Product')
 
 @section('content')
 
