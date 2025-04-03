@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 
 class ProductController extends Controller
@@ -80,10 +81,7 @@ public function index(Request $request)
             'productPhotos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
     
-        // Generate slug dari nama produk
         $slug = Str::slug($request->name);
-    
-        // Simpan produk dengan slug
         $product = Product::create(array_merge(
             $request->only([
                 'name', 'category_id', 'description', 'video', 'email', 'instagram', 'linkedin', 'github', 'product_link'
@@ -91,7 +89,6 @@ public function index(Request $request)
             [
                 'seller_name' => $request->seller_name[0],
                 'slug' => Str::slug($request->name),
-                // 'status' => 'pending',
                 'video' => $request->videoLink,
                 'user_id' => Auth::id(),
             ]
@@ -104,8 +101,7 @@ public function index(Request $request)
                 'name' => $sellerName,
             ]);
         }
-    
- // Simpan & resize foto produk
+        
 // Simpan & resize foto produk
 if ($request->hasFile('productPhotos')) {
     $request->validate([
@@ -114,7 +110,7 @@ if ($request->hasFile('productPhotos')) {
 
     foreach ($request->file('productPhotos') as $image) {
         $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-        $storagePath = "public/products/{$fileName}"; // Simpan ke public/products/
+        $storagePath = "public/products/{$fileName}"; 
 
         // Ambil ukuran asli sebelum diresize
         // $originalSize = $image->getSize(); 
@@ -251,30 +247,21 @@ public function update(Request $request, $slug)
         'video'        => $request->video,
     ]);
 
-    // Update slug berdasarkan nama produk baru
     $newSlug = Str::slug($request->name);
-    
-    // Pastikan slug unik
     $count = Product::where('slug', $newSlug)->where('id', '!=', $product->id)->count();
     if ($count > 0) {
-        $newSlug = $newSlug . '-' . uniqid();  // Tambahkan identifier unik jika slug sudah ada
+        $newSlug = $newSlug . '-' . uniqid();  
     }
 
     $product->update(['slug' => $newSlug]);
-
-    // Ambil semua seller yang sudah ada
     $existingSellers = $product->sellers->keyBy('id');
-
-    // Simpan seller yang akan tetap ada
     $submittedSellerIds = [];
 
     foreach ($request->seller_name as $index => $sellerName) {
         if (!empty($request->seller_id[$index]) && isset($existingSellers[$request->seller_id[$index]])) {
-            // Jika seller ID ada, update seller yang sudah ada
             $existingSellers[$request->seller_id[$index]]->update(['name' => $sellerName]);
             $submittedSellerIds[] = $request->seller_id[$index];
         } else {
-            // Jika seller ID tidak ada, buat seller baru
             $newSeller = Seller::create([
                 'product_id' => $product->id,
                 'name'       => $sellerName,
@@ -289,14 +276,14 @@ public function update(Request $request, $slug)
         Seller::whereIn('id', $sellersToDelete)->delete();
     }
 
-// Proses upload foto baru (jika ada)
+
 if ($request->hasFile('productPhotos')) {
         $request->validate([
-        'productPhotos.*' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Validasi format & ukuran
+        'productPhotos.*' => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ]);
     foreach ($request->file('productPhotos') as $image) {
         $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-        $storagePath = storage_path("app/public/products/{$fileName}"); // Simpan ke public storage
+        $storagePath = storage_path("app/public/products/{$fileName}"); 
 
         // Resize dan simpan gambar
         Image::make($image)
@@ -314,41 +301,28 @@ if ($request->hasFile('productPhotos')) {
     }
 }
 
-// Redirect kembali ke halaman produk
 return redirect()->route('products.show', $newSlug)->with('success', 'Produk berhasil diperbarui!');
           
 }
     public function search(Request $request)
     {
-        // Ambil kategori dari request, default ke 'All' jika tidak ada kategori
+    
         $category = $request->input('category', 'All');
-        
-        // Ambil query pencarian dari request
         $query = $request->input('query');
-     
-        // Mulai query produk
         $products = Product::with('category', 'photos', 'sellers');
     
-        // Tambahkan kondisi filter berdasarkan kategori jika kategori tidak 'All'
         if ($category !== 'All') {
             $products = $products->whereHas('category', function ($q) use ($category) {
                 $q->where('name', $category);
             });
         }
-    
-        // Tambahkan kondisi pencarian jika ada query
+
         if ($query) {
-            // Gunakan 'ilike' untuk pencarian tidak sensitif huruf besar/kecil di PostgreSQL
             $products = $products->where('name', 'ilike', '%' . $query . '%'); 
         }
     
-        // Ambil produk yang sesuai dengan kondisi pencarian
-        $products = $products->paginate(12); // Pastikan hasil query adalah koleksi
-    
-        // Ambil produk terbaru
+        $products = $products->paginate(12); 
         $latestProducts = Product::with('photos')->latest()->take(3)->get();
-    
-        // Menambahkan kategori aktif untuk dropdown filter
         $activeCategory = $category;
     
         // Kirim data ke view
@@ -365,18 +339,13 @@ return redirect()->route('products.show', $newSlug)->with('success', 'Produk ber
             return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan.'], 404);
         }
     
-        // Hapus file dari penyimpanan
-        Storage::disk('local')->delete('private/public/' . $photo->url);
-    
-        // Hapus dari database
+        Storage::disk('public')->delete('products/' . $photo->url);
         $photo->delete();
-    
         return response()->json(['success' => true, 'message' => 'Foto berhasil dihapus.']);
     }               
 
     public function getUpdatedProduct($slug)
     {
-        // Memuat relasi 'photos' dan 'sellers'
         $product = Product::with(['photos', 'sellers'])->where('slug', $slug)->first();
         
         if (!$product) {
@@ -395,7 +364,7 @@ return redirect()->route('products.show', $newSlug)->with('success', 'Produk ber
             'videoLink'            => $product->videoLink,
             'photos'               => $product->photos->map(function ($photo) {
                 return [
-                    'url' => route('private.file', ['path' => 'public/' . $photo->url]),
+                    'url' => route('public.file', ['path' => 'products/' . $photo->url]),
                 ];
             })
         ]);
@@ -405,17 +374,13 @@ return redirect()->route('products.show', $newSlug)->with('success', 'Produk ber
      */
 public function destroy($id)
 {
-    // Cek apakah produk ditemukan
     $product = Product::with(['photos', 'sellers'])->findOrFail($id);
-
-    // Pastikan hanya pemilik produk yang bisa menghapusnya
     if (Auth::id() !== $product->user_id) {
         return redirect()->route('products.index')->with('error', 'Anda tidak memiliki izin untuk menghapus produk ini.');
     }
 
-    // Hapus foto produk dari storage (disk local)
     foreach ($product->photos as $photo) {
-        Storage::disk('local')->delete("private/{$photo->url}");
+        Storage::disk('public')->delete("products/{$photo->url}");
     }
 
     // Hapus relasi sebelum menghapus produk utama
