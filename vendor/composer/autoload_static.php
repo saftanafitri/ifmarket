@@ -536,14 +536,12 @@ class ComposerStaticInit3042b1970cd72da12dc46450c4b629a9
     );
 
     public static $classMap = array (
-        'App\\Http\\Controllers\\AdminProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminProductController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\CategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/CategoryController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\PhotoController' => __DIR__ . '/../..' . '/app/Http/Controllers/PhotoController.php',
         'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
-        'App\\Http\\Controllers\\StorageController' => __DIR__ . '/../..' . '/app/Http/Controllers/StorageController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\AdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/AdminMiddleware.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -562,7 +560,6 @@ class ComposerStaticInit3042b1970cd72da12dc46450c4b629a9
         'App\\Http\\Requests\\UpdateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateProductRequest.php',
         'App\\Http\\Requests\\UpdatecategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdatecategoryRequest.php',
         'App\\Models\\Admin' => __DIR__ . '/../..' . '/app/Models/Admin.php',
-        'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',
         'App\\Models\\Home' => __DIR__ . '/../..' . '/app/Models/Home.php',
         'App\\Models\\Photo' => __DIR__ . '/../..' . '/app/Models/Photo.php',
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',

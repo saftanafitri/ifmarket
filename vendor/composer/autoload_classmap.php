@@ -6,14 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Http\\Controllers\\AdminProductController' => $baseDir . '/app/Http/Controllers/AdminProductController.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',
     'App\\Http\\Controllers\\CategoryController' => $baseDir . '/app/Http/Controllers/CategoryController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\PhotoController' => $baseDir . '/app/Http/Controllers/PhotoController.php',
     'App\\Http\\Controllers\\ProductController' => $baseDir . '/app/Http/Controllers/ProductController.php',
-    'App\\Http\\Controllers\\StorageController' => $baseDir . '/app/Http/Controllers/StorageController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\AdminMiddleware' => $baseDir . '/app/Http/Middleware/AdminMiddleware.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
@@ -32,7 +30,6 @@ return array(
     'App\\Http\\Requests\\UpdateProductRequest' => $baseDir . '/app/Http/Requests/UpdateProductRequest.php',
     'App\\Http\\Requests\\UpdatecategoryRequest' => $baseDir . '/app/Http/Requests/UpdatecategoryRequest.php',
     'App\\Models\\Admin' => $baseDir . '/app/Models/Admin.php',
-    'App\\Models\\Category' => $baseDir . '/app/Models/Category.php',
     'App\\Models\\Home' => $baseDir . '/app/Models/Home.php',
     'App\\Models\\Photo' => $baseDir . '/app/Models/Photo.php',
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
