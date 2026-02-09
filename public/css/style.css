@@ -1,0 +1,266 @@
+/* Background dan Font */
+body {
+    background-color: #f9f8db;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+header {
+    background-color: #f8d219;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+select option[value=""][disabled] {
+    display: none;
+}
+
+/* Mengatur warna ikon profil di header dengan selector yang BENAR */
+header .dropdown a svg {
+    fill: #000000; /* Mengatur warna isi ikon menjadi hitam */
+}
+
+/* (Opsional tapi direkomendasikan) Hilangkan dekorasi default link */
+header .dropdown a {
+    text-decoration: none;
+}
+
+header h1 span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.search-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Kontainer Profil */
+.profile-container {
+    margin-top: 10px;
+}
+
+/* Kontainer Info Profil */
+.profile-info {
+    display: flex; /* Menggunakan Flexbox untuk tata letak sejajar */
+    align-items: center; /* Vertikal rata tengah */
+}
+
+/* Ikon Profil */
+.profile-info svg {
+    width: 17px;
+    height: 15px;
+    fill: #000;
+}
+
+/* Nama Profil */
+.profile-name {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Daftar Tanpa Garis */
+.list-unstyled li a {
+    color: #000;
+    text-decoration: none;
+}
+
+.list-unstyled li a:hover {
+    color: #f9f8db;
+}
+
+/* Kartu Produk */
+.card {
+    background-color: #f8d219;
+    border-radius: 3px;
+    padding: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Konten rata kiri */
+    height: auto;
+    width: 100%; /* Gambar penuh selebar kolom */
+    object-fit: cover; /* Jaga proporsi gambar */
+}
+
+/* Gambar Produk */
+.card-img-top {
+    width: 100%; /* Gambar penuh selebar kolom */
+    height: 100%; /* Pertahankan aspek rasio */
+    border-radius: 5px;
+    object-fit: cover; /* Jaga proporsi gambar */
+}
+
+/* Konten Kartu */
+.card-body {
+    margin-top: 10px; /* Beri jarak antara gambar dan konten */
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 5px;
+}
+
+.card-text {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.btn-custom {
+    background-color: #fff;
+    color: black;
+    border: 1px solid #f8d219;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #f8d219;
+    color: #f9f8db;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background-color: #f8d219;
+    border-radius: 5px;
+}
+
+/* Tombol Custom */
+.custom-btn {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #f8d219;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    text-align: center;
+    padding: 5px 10px;
+    margin-left: 0.5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-btn:hover {
+    background-color: #f8d219;
+    color: #f9f8db;
+}
+
+/* Tabel */
+.table-custom td,
+.table-custom th {
+    background-color: #f8d219;
+    color: #000;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    h1 span,
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .dropdown-menu {
+        font-size: 0.9rem;
+    }
+
+    .search-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Tombol Sortir */
+.sort-btn {
+    background-color: transparent;
+    color: #000;
+    border: 2px solid transparent;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sort-btn:hover {
+    background-color: #f8d219;
+    color: #000;
+}
+
+.sort-btn.active {
+    background-color: #f8d219;
+    color: #000;
+}
+
+/* Galeri Gambar */
+.image-gallery {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.image-gallery img {
+    width: 100%;
+    cursor: pointer;
+}
+
+.img-thumbnail {
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.img-thumbnail:hover {
+    transform: scale(1.1);
+}
+
+/* Tombol Kustom */
+.btn-custom {
+    background-color: transparent;
+    color: #000;
+    border: 2px solid #ffcc00;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #ffcc00;
+}
+
+.custom-pagination .page-link {
+    color: black !important;
+    background-color: #f8d219 !important;
+    border-color: #f9f8db !important;
+}
+
+.custom-pagination .active .page-link {
+    background-color: #f9f8db !important;
+    border-color: #f8d219 !important;
+    color: black !important;
+}
+/* Footer */
+footer {
+    background-color: #f8d219;
+    color: #000;
+    padding: 20px;
+}

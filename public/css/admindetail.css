@@ -1,0 +1,194 @@
+/* ===== General Styles ===== */
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f8f9fa; /* Latar belakang sedikit off-white */
+    color: #212529; /* Teks lebih gelap untuk kontras */
+}
+
+h1 {
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* ===== Table Styling ===== */
+table {
+    width: 100%;
+    border-collapse: separate; /* Penting untuk border-radius */
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 12px; /* Sudut lebih tumpul */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Bayangan lebih lembut */
+    overflow: hidden; /* Memastikan konten mengikuti border-radius */
+}
+
+th,
+td {
+    padding: 18px 22px;
+    border-bottom: 1px solid #dee2e6; /* Garis pemisah lebih tipis */
+    vertical-align: middle;
+}
+
+/* Menghilangkan garis di baris terakhir */
+tr:last-child th,
+tr:last-child td {
+    border-bottom: none;
+}
+
+th {
+    background-color: #fff;
+    text-align: left;
+    width: 220px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-right: 1px solid #dee2e6;
+}
+
+/* ===== Link & Media Styling ===== */
+a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.media-grid img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.media-grid img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+iframe {
+    width: 100%;
+    max-width: 640px;
+    height: 360px;
+    border: none;
+    border-radius: 8px;
+}
+
+/* ===== Modal (Tidak Berubah) ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    margin: auto;
+    display: block;
+    border-radius: 8px;
+
+    /* Batasi ukuran agar tidak melebihi layar */
+    max-width: 90vw;  /* Maksimal 90% dari lebar layar */
+    max-height: 90vh; /* Maksimal 90% dari tinggi layar */
+
+    /* Biarkan lebar dan tinggi menyesuaikan secara otomatis */
+    width: auto;
+    height: auto;
+    
+    /* Kunci utama: pastikan gambar muat tanpa distorsi */
+    object-fit: contain;
+}
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===== Action Buttons ===== */
+.action-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.action-buttons button {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-2px); /* Efek tombol terangkat */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.action-buttons button.reject {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* ===== Responsive (Tidak banyak berubah, menyesuaikan padding) ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+        margin: 20px auto;
+    }
+    th,
+    td {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+    th {
+        background-color: transparent;
+        font-weight: 700;
+        padding-top: 20px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    td {
+        padding-top: 8px;
+    }
+    table {
+        border-radius: 0;
+        box-shadow: none;
+    }
+    iframe {
+        height: 200px;
+    }
+}

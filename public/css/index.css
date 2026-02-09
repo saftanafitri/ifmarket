@@ -1,0 +1,41 @@
+#category-select {
+    background-color: #f8d219;
+    color: #000;
+    border: 2px solid #f8d219;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+#category-select:hover {
+    background-color: #f8d219;
+}
+#category-select:focus {
+    background-color: #f8d219;
+    outline: none;
+}
+#category-select option {
+    background-color: #f8d219;
+    color: #000;
+    padding: 5px;
+}
+#category-select option:hover {
+    background-color: #f8d219 !important;
+    color: #fff !important;
+}
+#category-select option:checked {
+    background-color: #f8d219 !important;
+    color: #fff !important;
+}
+
+.card-img-top {
+    width: 100%; /* Memastikan lebar gambar mengikuti lebar kartu */
+    height: 75px; /* Tetapkan tinggi tetap untuk gambar */
+    object-fit: cover; /* Memastikan gambar tetap terlihat bagus dengan cropping jika perlu */
+}
+.card-img {
+    width: 100%; /* Mengatur lebar gambar sesuai dengan kartu */
+    height: 200px; /* Menetapkan tinggi tetap untuk gambar */
+    object-fit: cover; /* Menjaga rasio aspek dan memotong bagian yang tidak sesuai */
+}
