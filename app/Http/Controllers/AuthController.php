@@ -90,7 +90,7 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
-
+    
     private function redirectBasedOnRole($role_id)
     {
         return match ($role_id) {
