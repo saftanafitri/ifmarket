@@ -11,13 +11,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 
 class ProductController extends Controller
 {
+
+    protected ImageManager $imageManager;
+
+        public function __construct()
+        {
+            $this->imageManager = new ImageManager(new Driver());
+        }
+
     /**
      * Display a listing of the resource.*/
     public function index(Request $request)
@@ -118,20 +127,24 @@ class ProductController extends Controller
         
         // Simpan & resize foto produk
         if ($request->hasFile('productPhotos')) {
-            foreach ($request->file('productPhotos') as $image) {
-                $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $storagePath = "public/products/{$fileName}"; 
+            foreach ($request->file('productPhotos') as $imageFile) {
 
-                Image::make($image)
+                $fileName = $product->id . '-' . uniqid() . '.jpg';
+                $storagePath = 'products/' . $fileName;
+
+                $image = $this->imageManager
+                    ->read($imageFile)
                     ->resize(800, 800, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     })
-                    ->save(storage_path("app/{$storagePath}"), 50);
+                    ->toJpeg(75);
 
+                // SIMPAN KE STORAGE (local / s3 / minio)
+                Storage::disk('public')->put($storagePath, (string) $image);
                 Photo::create([
                     'product_id' => $product->id,
-                    'url' => "products/{$fileName}",
+                    'url'        => $storagePath, // SIMPAN PATH SAJA
                 ]);
             }
         }
@@ -151,7 +164,8 @@ class ProductController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $relatedProducts = Product::with('photos')
+        $relatedProducts = Product::approved()
+            ->with(['category', 'photos', 'sellers'])
             ->where('category_id', $product->category_id)
             ->where('slug', '!=', $product->slug)
             ->take(3)
@@ -280,30 +294,27 @@ class ProductController extends Controller
             Seller::whereIn('id', $sellersToDelete)->delete();
         }
 
+        if ($request->hasFile('productPhotos')) {
+            foreach ($request->file('productPhotos') as $imageFile) {
 
-    if ($request->hasFile('productPhotos')) {
-            $request->validate([
-            'productPhotos.*' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-        foreach ($request->file('productPhotos') as $image) {
-            $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $storagePath = storage_path("app/public/products/{$fileName}"); 
+                $fileName = $product->id . '-' . uniqid() . '.jpg';
+                $storagePath = 'products/' . $fileName;
 
-            // Resize dan simpan gambar
-            Image::make($image)
-                ->resize(800, 800, function ($constraint) {
-                    $constraint->aspectRatio(); 
-                    $constraint->upsize(); 
-                })
-                ->save($storagePath, 50); 
+                $image = $this->imageManager
+                    ->read($imageFile)
+                    ->resize(800, 800, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->toJpeg(75);
 
-            // Simpan path gambar ke database
-            Photo::create([
-                'product_id' => $product->id,
-                'url'        => "storage/products/{$fileName}", // Path relatif
-            ]);
+                Storage::disk('public')->put($storagePath, (string) $image);
+                Photo::create([
+                    'product_id' => $product->id,
+                    'url'        => $storagePath,
+                ]);
+            }
         }
-    }
 
     return redirect()->route('products.show', $newSlug)->with('success', 'Produk berhasil diperbarui!');
             
@@ -343,7 +354,7 @@ class ProductController extends Controller
             return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan.'], 404);
         }
     
-        Storage::disk('public')->delete('products/' . $photo->url);
+        Storage::delete($photo->url);
         $photo->delete();
         return response()->json(['success' => true, 'message' => 'Foto berhasil dihapus.']);
     }               
@@ -384,7 +395,7 @@ class ProductController extends Controller
         }
 
         foreach ($product->photos as $photo) {
-            Storage::disk('public')->delete("products/{$photo->url}");
+             Storage::delete($photo->url);
         }
 
         // Hapus relasi sebelum menghapus produk utama
