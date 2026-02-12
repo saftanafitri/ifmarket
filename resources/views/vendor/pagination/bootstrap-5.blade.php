@@ -16,7 +16,7 @@
             @php
                 $current = $paginator->currentPage();
                 $last = $paginator->lastPage();
-                $range = 2; // jumlah halaman kiri-kanan halaman aktif
+                $range = 3; // jumlah halaman kiri-kanan halaman aktif
             @endphp
 
             @for ($page = 1; $page <= $last; $page++)
