@@ -39,7 +39,7 @@ class AuthController extends Controller
         }
     
         // ==== 2. login sebagai User Eksternal ====
-        $response = Http::withToken(env('API_TOKEN'))->post(env('API_LOGIN_URL'), [
+        $response = Http::withToken(env('LOGIN_TOKEN'))->post(env('LOGIN_URL'), [
             'username' => $credentials['username'],
             'password' => $credentials['password'],
         ]);
