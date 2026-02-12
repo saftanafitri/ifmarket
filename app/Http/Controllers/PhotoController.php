@@ -35,8 +35,9 @@ class PhotoController extends Controller
 
         foreach ($request->file('productPhotos') as $file) {
             $path = $file->store("products/{$productId}/photos", 'public');
+
             Photo::create([
-                'url' => Storage::url($path),
+                'url' => $path, // SIMPAN PATH SAJA
                 'product_id' => $productId,
             ]);
         }
@@ -55,16 +56,17 @@ class PhotoController extends Controller
 
         $photo = Photo::findOrFail($id);
 
-        // Hapus foto lama
-        $oldPath = str_replace('/storage/', '', $photo->url);
-        if (Storage::disk('public')->exists($oldPath)) {
-            Storage::disk('public')->delete($oldPath);
+        // hapus foto lama
+        if (Storage::disk('public')->exists($photo->url)) {
+            Storage::disk('public')->delete($photo->url);
         }
 
-        // Simpan foto baru
-        $path = $request->file('photo')->store("products/{$photo->product_id}/photos", 'public');
+        // simpan foto baru
+        $path = $request->file('photo')
+            ->store("products/{$photo->product_id}/photos", 'public');
+
         $photo->update([
-            'url' => Storage::url($path),
+            'url' => $path, // PATH
         ]);
 
         return redirect()->back()->with('success', 'Foto berhasil diperbarui.');
@@ -78,9 +80,8 @@ class PhotoController extends Controller
         $photo = Photo::findOrFail($id);
 
         // Hapus file dari storage
-        $path = str_replace('/storage/', '', $photo->url);
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
+        if (Storage::disk('public')->exists($photo->url)) {
+            Storage::disk('public')->delete($photo->url);
         }
 
         $photo->delete();
