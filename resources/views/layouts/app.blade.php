@@ -17,28 +17,18 @@
     
 <body>
     <header class="bg-custom py-3">
-        <div class="container d-flex justify-content-between align-items-center">
+        <div class="container d-flex align-items-center justify-content-between flex-nowrap">
             <div class="d-flex align-items-center">
-                <img src="{{ asset('images/saktilogo.png') }}" alt="Sakti Product" class="me-2"
-                    style="width: 70px;">
-                <h1 class="h4 m-0 ">
+                <img src="{{ asset('images/saktilogo.png') }}"
+                    style="width: 50px;"
+                    class="me-2">
+
+                <h1 class="h5 m-0">
                     <span class="d-block">SAKTI</span>
                     <span class="d-block">PRODUCT</span>
                 </h1>
             </div>
-            
-            @if (!in_array(Route::currentRouteName(), ['login', 'products.detail', 'products.create', 'manageProduct', 'products.show']))
-                <div class="input-group w-50">
-                    <form action="{{ route('products.search') }}" method="GET" class="d-flex w-100">
-                        <input type="text" name="query" class="form-control" placeholder="Search for anything...">
-                        <input type="hidden" name="category" value="{{ request('category', 'All') }}">
-                        <button type="submit" class="search-btn btn btn-primary">
-                            <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" alt="Search Icon" style="width: 20px; height: 20px;">
-                        </button>
-                    </form>
-                </div>
-            @endif
-            <div class="dropdown">
+          <div class="dropdown">
                 <div id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                     @if(Auth::check() && session('foto_user'))
                         <img src="{{ session('foto_user') }}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
@@ -53,23 +43,40 @@
                 </div>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    @if(!Auth::check() && Route::currentRouteName() == 'home.index')
-                        <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
-                    @else
-                        <li><a class="dropdown-item" href="{{ route('home.index') }}">Home</a></li>
-                
-                        @if(Auth::check())
-                            <li><a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a></li>
-                            <li><a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('home.index') }}">Home</a>
+                    </li>
+
+                    @auth
+
+                        @if(auth()->user()->role_id == 2)
+                            <li>
+                                <a class="dropdown-item" href="{{ route('products.create') }}">Add Products</a>
                             </li>
-                        @else
-                            <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('manageProduct') }}">Manage Products</a>
+                            </li>
                         @endif
-                    @endif
+
+                        @if(auth()->user()->role_id == 1)
+                            <li>
+                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
+                            </li>
+                        @endif
+                        <li>
+                            <a class="dropdown-item" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        </li>
+                    @else
+                        <li>
+                            <a class="dropdown-item" href="{{ route('login') }}">Login</a>
+                        </li>
+                    @endauth
                 </ul>                   
             </div>
         </div>
