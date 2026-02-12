@@ -22,7 +22,6 @@
 }
 
 .main-image-container.is-portrait {
-    aspect-ratio: 1 / 1; /* Paksa jadi persegi */
     display: flex;
     align-items: center;
     justify-content: center;
