@@ -26,11 +26,14 @@
         <tr>
             <th>Foto</th>
             <td>
-                <div class="media-grid">
-                    @foreach ($product->photos as $photo)
-                    <img src="{{ asset('storage/' . $photo->url) }}" alt="Foto Produk" class="preview-image">
-                    @endforeach
-                </div>
+            <div class="media-grid">
+                @foreach ($product->photos as $photo)
+                    <img src="{{ $photo->full_url }}"
+                        alt="Foto Produk"
+                        class="preview-image"
+                        loading="lazy">
+                @endforeach
+            </div>
             </td>
         </tr>
         <tr>
