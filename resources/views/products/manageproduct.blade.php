@@ -39,13 +39,13 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @if($product->photos->isNotEmpty())
-                                <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
-                                     alt="{{ $product->name }}"
-                                     class="product-img me-3">
+                                <img src="{{ $product->photos->first()->full_url }}"
+                                    alt="{{ $product->name }}"
+                                    class="product-img me-3">
                             @else
                                 <img src="{{ asset('default.jpg') }}"
-                                     alt="Default Image"
-                                     class="product-img me-3">
+                                    alt="Default Image"
+                                    class="product-img me-3">
                             @endif
                             <p class="m-0">{{ $product->name }}</p>
                         </div>
