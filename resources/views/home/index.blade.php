@@ -4,25 +4,46 @@
 @section('title', 'Sakti Product')
 
 @section('content')
-
+            <div class="py-4">
+                <div class="container">
+                <form action="{{ route('products.search') }}" method="GET">
+                    <div class="input-group input-group-lg">
+                        <input type="text"
+                            name="query"
+                            class="form-control"
+                            placeholder="Cari produk...">
+                        <button class="btn btn-warning">
+                            🔍
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     <section class="py-5">
         <div class="container">
             <div class="header-section d-flex justify-content-between align-items-center mb-4">
                 <h2 class="text-left">Produk</h2>
+
                 <div class="sorting-dropdown">
-                    <form action="{{ route('home.index') }}" method="GET" class="d-flex" id="category-form">
-                        <select name="category" id="category-select" class="form-select" onchange="submitCategoryForm()">
-                            <option value="All" {{ $category === 'All' ? 'selected' : '' }}>Semua</option>
-                            <option value="Kerja Praktik(KP)" {{ $category === 'Kerja Praktik(KP)' ? 'selected' : '' }}>Kerja Praktik (KP)</option>
-                            <option value="Tugas Akhir(TA)" {{ $category === 'Tugas Akhir(TA)' ? 'selected' : '' }}>Tugas Akhir (TA)</option>
-                            <option value="Penelitian" {{ $category === 'Penelitian' ? 'selected' : '' }}>Penelitian</option>
-                            <option value="Pengabdian Masyarakat" {{ $category === 'Pengabdian Masyarakat' ? 'selected' : '' }}>Pengabdian Masyarakat</option>
-                            <option value="Tugas Kuliah" {{ $category === 'Tugas Kuliah' ? 'selected' : '' }}>Tugas Kuliah</option>
-                        </select>
-                    </form>
+                    <div class="dropdown">
+                        <button class="btn btn-warning btn-sm dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            {{ $category === 'All' || !$category ? 'Semua' : $category }}
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'All']) }}">Semua</a></li>
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'Kerja Praktik(KP)']) }}">Kerja Praktik (KP)</a></li>
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'Tugas Akhir(TA)']) }}">Tugas Akhir (TA)</a></li>
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'Penelitian']) }}">Penelitian</a></li>
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'Pengabdian Masyarakat']) }}">Pengabdian Masyarakat</a></li>
+                            <li><a class="dropdown-item" href="{{ route('home.index', ['category' => 'Tugas Kuliah']) }}">Tugas Kuliah</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-
             {{-- Menampilkan hasil pencarian jika ada parameter query --}}
             @if(request('query'))
                 <h2 class="text-center my-4">Hasil Pencarian untuk: "{{ request('query') }}"</h2>
@@ -30,12 +51,12 @@
 
             <div class="row g-4" id="product-list">
                 @forelse ($products as $product)
-                <div class="col-md-5 col-lg-2 product-item" data-category="{{ $product->category?->name ?? 'Tanpa Kategori' }}">
-                    <div class="card">
+                <div class="col-6 col-md-4 col-lg-2 product-item" data-category="{{ $product->category?->name ?? 'Tanpa Kategori' }}">
+                    <div class="card h-100">
                         @if ($product->photos->isNotEmpty())
-                            <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
-                                 alt="{{ $product->name }}" 
-                                 class="card-img-top" 
+                            <img src="{{ $product->photos->first()->full_url }}"
+                                 alt="{{ $product->name }}"
+                                 class="card-img-top"
                                  style="border-radius: 0;">
                         @else
                             <img src="{{ asset('images/placeholder.png') }}" 
@@ -84,9 +105,9 @@
                     <div class="col-lg-4">
                         <div class="card">
                             @if ($product->photos->isNotEmpty())
-                                <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
-                                     alt="{{ $product->name }}" 
-                                     class="card-img" 
+                                <img src="{{ $product->photos->first()->full_url }}"
+                                     alt="{{ $product->name }}"
+                                     class="card-img"
                                      style="border-radius: 0;">
                             @else
                                 <img src="{{ asset('images/placeholder.png') }}" 
