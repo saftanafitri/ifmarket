@@ -21,7 +21,7 @@
             <div class="main-image-container">
                 @if ($product->photos->isNotEmpty())
                     <img id="main-image"
-                         src="{{ asset('storage/' . $product->photos->first()->url) }}"
+                         src="{{ $related->photos->first()->full_url }}"
                          alt="{{ $product->name }}"
                          class="img-fluid">
                 @else
@@ -39,8 +39,8 @@
                 <div class="thumbnails-wrapper">
                     @foreach ($product->photos as $photo)
                         <div class="thumbnail-item @if ($loop->first) active @endif" 
-                             onclick="updateMainImage(this, '{{ asset('storage/' . $photo->url) }}')">
-                            <img src="{{ asset('storage/' . $photo->url) }}" alt="Thumbnail" class="thumbnail-img">
+                             onclick="updateMainImage(this, '{{ $photo->full_url }}')">
+                            <img src="{{ $photo->full_url }}" alt="Thumbnail" class="thumbnail-img">
                         </div>
                     @endforeach
                 </div>
@@ -121,7 +121,7 @@
                         <div class="col-lg-4">
                             <div class="card">
                                 @if ($related->photos->isNotEmpty())
-                                    <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
+                                    <img src="{{ $related->photos->first()->full_url }}"
                                          alt="{{ $related->name }}" 
                                          class="card-img" 
                                          style="border-radius: 0;">
@@ -133,6 +133,7 @@
                                 @endif
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $related->name }}</h5>
+                                    <p class="text-muted small mb-1">{{ $related->category->name ?? 'Tanpa Kategori' }}</p>
                                     <div class="d-flex align-items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                             class="bi bi-person-circle me-2 text-dark" viewBox="0 0 16 16">
