@@ -21,7 +21,7 @@
             <div class="main-image-container">
                 @if ($product->photos->isNotEmpty())
                     <img id="main-image"
-                         src="{{ $related->photos->first()->full_url }}"
+                         src="{{ $product->photos->first()->full_url }}"
                          alt="{{ $product->name }}"
                          class="img-fluid">
                 @else
