@@ -3,7 +3,7 @@
 copy .env.example .env
 composer install
 composer require laravel/sanctum
-composer require intervention/image:^2.7
+composer require intervention/image
 php artisan key:generate
 php artisan migrate
 php artisan db:seed
