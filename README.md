@@ -1,7 +1,3 @@
-# Sakti Produk
-
-Sakti Produk adalah aplikasi berbasis Laravel yang digunakan untuk menampilkan dan mengelola produk hasil kegiatan akademik seperti Kerja Praktik, Pengabdian kepada Masyarakat, dan Tugas Akhir.
-
 ## Instalasi dan Konfigurasi
 ```bash
 copy .env.example .env
@@ -16,4 +12,7 @@ php artisan route:clear
 php artisan optimize:clear
 php artisan storage:link
 ```
-- NB: Memerlukan penyimpanan eksternal untuk menyimpan foto-foto produk
+## NB: Deployment Notes
+
+- Pastikan direktori `storage/` dan `bootstrap/cache/` writable oleh web server.
+- Aplikasi memerlukan penyimpanan eksternal untuk foto produk.
