@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Seller;
 use App\Models\Photo;
-use App\Models\User;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +13,6 @@ use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 
 
 class ProductController extends Controller
@@ -140,7 +138,7 @@ class ProductController extends Controller
                     })
                     ->toJpeg(75);
 
-                // SIMPAN KE STORAGE (local / s3 / minio)
+                // SIMPAN KE STORAGE (local / eksternal)
                 Storage::disk('public')->put($storagePath, (string) $image);
                 Photo::create([
                     'product_id' => $product->id,
