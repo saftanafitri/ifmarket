@@ -7,7 +7,6 @@ composer require intervention/image
 php artisan key:generate
 php artisan migrate
 php artisan db:seed
-php artisan key:generate
 php artisan route:clear
 php artisan optimize:clear
 php artisan storage:link
