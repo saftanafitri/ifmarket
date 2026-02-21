@@ -1,156 +1,250 @@
-// Tambah Seller
-function addSeller() {
-    let sellerContainer = document.getElementById("seller-container");
-    let newSeller = document.createElement("div");
-    newSeller.classList.add("mb-3", "seller-item");
-    newSeller.innerHTML = `
-        <div class="d-flex">
-            <input type="text" class="form-control border-warning" name="seller_name[]" required>
-            <span class="remove-btn text-danger" style="cursor: pointer; margin-left: 10px;" onclick="removeSeller(this)">×</span>
-        </div>
-    `;
-    sellerContainer.appendChild(newSeller);
+// ==========================================================
+// GLOBAL STATE
+// ==========================================================
+
+const dropArea = document.getElementById("addPhotoBox");
+const fileInput = document.getElementById("productPhotos");
+const photoLabelText = document.getElementById("photoLabelText");
+
+let uploadedFiles = [];
+
+// ==========================================================
+// FOTO LOGIC
+// ==========================================================
+
+function getExistingPhotoCount() {
+    return document.querySelectorAll("[id^='photo-']").length;
 }
 
-// Hapus Seller
-function removeSeller(element) {
-    element.parentElement.parentElement.remove();
+function getTotalPhotoCount() {
+    return getExistingPhotoCount() + uploadedFiles.length;
 }
 
-// Hapus Foto Lama dari Server
-function deletePhoto(photoId) {
-    fetch(
-        "{{ route('products.photos.delete', ['slug' => $product->slug, 'photoId' => ':photoId']) }}".replace(
-            ":photoId",
-            photoId
-        ),
-        {
-            method: "DELETE",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json",
-            },
-        }
-    )
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                document.getElementById("photo-" + photoId).remove();
-                updatePhotoCount();
-            } else {
-                alert(
-                    data.message || "Gagal menghapus foto. Silakan coba lagi."
-                );
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan saat menghapus foto.");
-        });
+function updatePhotoCount() {
+    photoLabelText.innerText = `${getTotalPhotoCount()}/9`;
 }
 
-// Tambah Preview Foto Baru Sebelum Upload
-document
-    .getElementById("productPhotos")
-    .addEventListener("change", function (event) {
-        const photoContainer = document.querySelector(".d-flex.flex-wrap");
-        const files = event.target.files;
-        let existingPhotos =
-            document.querySelectorAll(".position-relative").length;
+function renderNewPhotos() {
+    const container = document.querySelector(".d-flex.flex-wrap");
+    document.querySelectorAll("[id^='new-preview-']").forEach(el => el.remove());
 
-        if (files.length + existingPhotos > 9) {
-            alert("Maksimal 9 foto diperbolehkan.");
-            return;
-        }
+    uploadedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("position-relative");
+            wrapper.style.width = "100px";
+            wrapper.style.height = "100px";
+            wrapper.id = "new-preview-" + index;
 
-        Array.from(files).forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const photoId =
-                    "new-" + Math.random().toString(36).substr(2, 9);
-                const photoElement = document.createElement("div");
-                photoElement.id = photoId;
-                photoElement.classList.add("position-relative");
-                photoElement.style.width = "100px";
-                photoElement.style.height = "100px";
-
-                photoElement.innerHTML = `
-                <img src="${e.target.result}" alt="Foto Baru"
-                    class="img-thumbnail" style="width: 100px; height: 100px;">
-                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0"
-                        onclick="removeNewPhoto('${photoId}')">x</button>
+            wrapper.innerHTML = `
+                <img src="${e.target.result}" 
+                     class="img-thumbnail"
+                     style="width:100px;height:100px;">
+                <button type="button"
+                        class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                        onclick="removeNewPhoto(${index})">x</button>
             `;
 
-                photoContainer.insertBefore(
-                    photoElement,
-                    document.getElementById("addPhotoBox")
-                );
-            };
-            reader.readAsDataURL(file);
-        });
-
-        setTimeout(updatePhotoCount, 100); // Beri jeda agar foto baru dihitung
+            container.insertBefore(wrapper, dropArea);
+        };
+        reader.readAsDataURL(file);
     });
 
-// Hapus Foto Baru Sebelum Submit
-function removeNewPhoto(photoId) {
-    document.getElementById(photoId).remove();
     updatePhotoCount();
 }
 
-// Update Jumlah Foto yang Ditampilkan
-function updatePhotoCount() {
-    let totalPhotos = document.querySelectorAll(".position-relative").length;
-    document.getElementById("photoLabelText").innerText = totalPhotos + "/9";
-}
+function handleFiles(files) {
+    const maxFiles = 9;
 
-// Pastikan angka diperbarui saat halaman dimuat pertama kali
-document.addEventListener("DOMContentLoaded", updatePhotoCount);
-
-// JS video
-// JavaScript untuk Preview Video
-document.getElementById("videoLink").addEventListener("input", function () {
-    const videoURL = this.value.trim();
-    const videoPreviewContainer = document.querySelector(
-        ".video-preview-container"
-    );
-
-    if (!videoURL) {
-        videoPreviewContainer.innerHTML =
-            '<small class="text-muted">Pratinjau video akan muncul di sini setelah URL dimasukkan.</small>';
+    if (getTotalPhotoCount() + files.length > maxFiles) {
+        Swal.fire({
+            icon: "warning",
+            title: "Maksimal 9 Foto",
+            text: "Anda hanya bisa mengunggah maksimal 9 foto.",
+        });
         return;
     }
 
-    if (isYouTube(videoURL)) {
-        const videoId = extractYouTubeId(videoURL);
-        if (videoId) {
-            showYouTubePreview(videoId);
-        } else {
-            videoPreviewContainer.innerHTML =
-                '<small class="text-danger">URL tidak valid atau bukan video YouTube.</small>';
-        }
-    } else {
-        videoPreviewContainer.innerHTML =
-            '<small class="text-danger">URL tidak valid atau bukan video YouTube.</small>';
-    }
-});
+    uploadedFiles = [...uploadedFiles, ...files];
+    renderNewPhotos();
+}
 
-function isYouTube(url) {
-    return url.includes("youtube.com") || url.includes("youtu.be");
+if (fileInput) {
+    fileInput.addEventListener("change", function () {
+        handleFiles(Array.from(this.files));
+    });
+}
+
+function removeNewPhoto(index) {
+    uploadedFiles.splice(index, 1);
+    renderNewPhotos();
+}
+
+// ==========================================================
+// DELETE FOTO LAMA (SweetAlert Confirm)
+// ==========================================================
+
+function deletePhoto(photoId) {
+    Swal.fire({
+        title: "Hapus Foto?",
+        text: "Foto yang dihapus tidak dapat dikembalikan.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Ya, hapus",
+    }).then(result => {
+        if (!result.isConfirmed) return;
+
+        const url = deletePhotoBaseUrl.replace('PHOTO_ID', photoId);
+
+        // 🔥 Loading SweetAlert
+        Swal.fire({
+            title: "Menghapus...",
+            text: "Mohon tunggu sebentar",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        fetch(url, {
+            method: "DELETE",
+            headers: {
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+                Accept: "application/json",
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+
+                    const photoElement = document.getElementById("photo-" + photoId);
+
+                    if (photoElement) {
+                        photoElement.style.transition = "opacity 0.3s ease";
+                        photoElement.style.opacity = "0";
+                        setTimeout(() => {
+                            photoElement.remove();
+                            updatePhotoCount();
+                        }, 300);
+                    }
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil",
+                        text: "Foto berhasil dihapus.",
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+
+                } else {
+                    Swal.fire("Gagal", data.message || "Terjadi kesalahan.", "error");
+                }
+            })
+            .catch(() => {
+                Swal.fire("Error", "Terjadi kesalahan server.", "error");
+            });
+    });
+}
+// ==========================================================
+// VIDEO PREVIEW
+// ==========================================================
+
+const videoInput = document.getElementById("videoLink");
+const videoContainer = document.querySelector(".video-preview-container");
+
+if (videoInput) {
+    videoInput.addEventListener("input", function () {
+        const id = extractYouTubeId(this.value.trim());
+        if (!id) {
+            videoContainer.innerHTML =
+                '<small class="text-muted">Pratinjau video akan muncul di sini.</small>';
+            return;
+        }
+        videoContainer.innerHTML = `
+            <iframe src="https://www.youtube.com/embed/${id}"
+                frameborder="0"
+                allowfullscreen
+                style="width:100%;height:100%;border-radius:10px;">
+            </iframe>
+        `;
+    });
 }
 
 function extractYouTubeId(url) {
     const regex =
-        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+\/\S+[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        /(?:youtube\.com\/(?:.*v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regex);
     return match ? match[1] : null;
 }
 
-function showYouTubePreview(videoId) {
-    const videoPreviewContainer = document.querySelector(
-        ".video-preview-container"
-    );
-    videoPreviewContainer.innerHTML = `
-            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-        `;
+// ==========================================================
+// SELLER (MINIMAL 1)
+// ==========================================================
+
+function addSeller() {
+    const container = document.getElementById("seller-container");
+    const div = document.createElement("div");
+    div.classList.add("mb-3", "seller-item");
+    div.innerHTML = `
+        <div class="d-flex">
+            <input type="text" class="form-control border-warning"
+                   name="seller_name[]" required>
+            <span class="text-danger"
+                  style="cursor:pointer;margin-left:10px;"
+                  onclick="removeSeller(this)">×</span>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function removeSeller(btn) {
+    const container = document.getElementById("seller-container");
+    if (container.querySelectorAll(".seller-item").length <= 1) {
+        Swal.fire("Minimal 1 Pemilik", "Tidak bisa dihapus semua.", "warning");
+        return;
+    }
+    btn.closest(".seller-item").remove();
+}
+
+// ==========================================================
+// SUBMIT CONFIRM SWEETALERT
+// ==========================================================
+
+document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Update Produk?",
+        text: "Pastikan data sudah benar.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Ya, Update",
+    }).then(result => {
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: "Menyimpan...",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
+        e.target.submit();
+    });
+});
+
+document.addEventListener("DOMContentLoaded", updatePhotoCount);
+
+function removeSeller(btn) {
+    const container = document.getElementById("seller-container");
+    if (container.querySelectorAll(".seller-item").length <= 1) {
+        Swal.fire("Minimal 1 Pemilik", "Tidak bisa dihapus semua.", "warning");
+        return;
+    }
+    btn.closest(".seller-item").remove();
 }
