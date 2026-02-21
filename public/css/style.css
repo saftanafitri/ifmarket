@@ -98,7 +98,7 @@ header h1 span {
 /* Gambar Produk */
 .card-img-top {
     width: 100%; /* Gambar penuh selebar kolom */
-    height: 100%; /* Pertahankan aspek rasio */
+    height: 100px; 
     border-radius: 5px;
     object-fit: cover; /* Jaga proporsi gambar */
 }
@@ -311,4 +311,81 @@ footer {
     background-color: #f8d219;
     color: #000;
     padding: 20px;
+}
+
+/* Footer Layout */
+.footer-row {
+    display: flex;
+    align-items: stretch;
+    
+}
+
+.footer-col {
+    padding: 0 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Garis pembatas antar kolom */
+.footer-col:not(:last-child) {
+    border-right: 1px solid #000;
+}
+
+.footer-copy {
+    margin-top: 20px;
+    font-size: 0.9 rem;
+}
+
+/* Judul */
+footer h5 {
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+/* Link */
+footer ul li {
+    margin-bottom: 6px;
+}
+
+footer ul li a {
+    color: #000;
+    text-decoration: none;
+}
+
+footer ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Biar logo tidak terlalu besar */
+footer img {
+    max-width: 150px;
+    margin-bottom: 10px;
+}
+
+/* Bikin semua card sama tinggi */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-md-4, 
+.col-lg-3 {
+    display: flex;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Supaya isi card terdorong rapi */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-body .btn-custom {
+    margin-top: auto; /* tombol selalu di bawah */
 }
