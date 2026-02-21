@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Sakti Product')
@@ -54,7 +53,7 @@
                 <div class="col-6 col-md-4 col-lg-2 product-item" data-category="{{ $product->category?->name ?? 'Tanpa Kategori' }}">
                     <div class="card h-100">
                         @if ($product->photos->isNotEmpty())
-                            <img src="{{ $product->photos->first()->full_url }}"
+                            <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
                                  alt="{{ $product->name }}"
                                  class="card-img-top"
                                  style="border-radius: 0;">
@@ -105,7 +104,7 @@
                     <div class="col-lg-4">
                         <div class="card">
                             @if ($product->photos->isNotEmpty())
-                                <img src="{{ $product->photos->first()->full_url }}"
+                                <img src="{{ asset('storage/' . $product->photos->first()->url) }}"
                                      alt="{{ $product->name }}"
                                      class="card-img"
                                      style="border-radius: 0;">
