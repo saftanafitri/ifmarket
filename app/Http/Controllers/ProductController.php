@@ -5,26 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Seller;
 use App\Models\Photo;
+use App\Models\User;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 
 class ProductController extends Controller
 {
-
-    protected ImageManager $imageManager;
-
-        public function __construct()
-        {
-            $this->imageManager = new ImageManager(new Driver());
-        }
-
     /**
      * Display a listing of the resource.*/
     public function index(Request $request)
@@ -125,24 +118,20 @@ class ProductController extends Controller
         
         // Simpan & resize foto produk
         if ($request->hasFile('productPhotos')) {
-            foreach ($request->file('productPhotos') as $imageFile) {
+            foreach ($request->file('productPhotos') as $image) {
+                $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $storagePath = "public/products/{$fileName}"; 
 
-                $fileName = $product->id . '-' . uniqid() . '.jpg';
-                $storagePath = 'products/' . $fileName;
-
-                $image = $this->imageManager
-                    ->read($imageFile)
+                Image::make($image)
                     ->resize(800, 800, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     })
-                    ->toJpeg(75);
+                    ->save(storage_path("app/{$storagePath}"), 50);
 
-                // SIMPAN KE STORAGE (local / eksternal)
-                Storage::disk('public')->put($storagePath, (string) $image);
                 Photo::create([
                     'product_id' => $product->id,
-                    'url'        => $storagePath, // SIMPAN PATH SAJA
+                    'url' => "products/{$fileName}",
                 ]);
             }
         }
@@ -162,8 +151,7 @@ class ProductController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $relatedProducts = Product::approved()
-            ->with(['category', 'photos', 'sellers'])
+        $relatedProducts = Product::with('photos')
             ->where('category_id', $product->category_id)
             ->where('slug', '!=', $product->slug)
             ->take(3)
@@ -247,7 +235,8 @@ class ProductController extends Controller
             'github'        => 'nullable|url|max:255',
             'product_link'  => 'required|url|max:255',
             'video'         => 'nullable|url|max:255',
-            'productPhotos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'productPhotos'   => 'nullable|array|max:9',
+            'productPhotos.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // Update data produk
@@ -292,30 +281,40 @@ class ProductController extends Controller
             Seller::whereIn('id', $sellersToDelete)->delete();
         }
 
+
         if ($request->hasFile('productPhotos')) {
-            foreach ($request->file('productPhotos') as $imageFile) {
 
-                $fileName = $product->id . '-' . uniqid() . '.jpg';
-                $storagePath = 'products/' . $fileName;
+            $existingPhotoCount = $product->photos()->count();
+            $newPhotoCount = count($request->file('productPhotos'));
 
-                $image = $this->imageManager
-                    ->read($imageFile)
+            if (($existingPhotoCount + $newPhotoCount) > 9) {
+                return back()->withErrors([
+                    'productPhotos' => 'Total maksimal 9 foto.'
+                ]);
+            }
+
+            foreach ($request->file('productPhotos') as $image) {
+
+                $fileName = $product->id . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $storagePath = storage_path("app/public/products/{$fileName}");
+
+                Image::make($image)
                     ->resize(800, 800, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     })
-                    ->toJpeg(75);
+                    ->save($storagePath, 70); // Quality 70 lebih balance
 
-                Storage::disk('public')->put($storagePath, (string) $image);
                 Photo::create([
                     'product_id' => $product->id,
-                    'url'        => $storagePath,
+                    'url'        => "products/{$fileName}", // simpan tanpa storage/
                 ]);
             }
         }
 
-    return redirect()->route('products.show', $newSlug)->with('success', 'Produk berhasil diperbarui!');
-            
+        return redirect()
+            ->route('products.show', $newSlug)
+            ->with('success', 'Produk berhasil diperbarui!');
     }
     public function search(Request $request)
     {
@@ -352,7 +351,7 @@ class ProductController extends Controller
             return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan.'], 404);
         }
     
-        Storage::delete($photo->url);
+        Storage::disk('public')->delete('products/' . $photo->url);
         $photo->delete();
         return response()->json(['success' => true, 'message' => 'Foto berhasil dihapus.']);
     }               
@@ -393,7 +392,7 @@ class ProductController extends Controller
         }
 
         foreach ($product->photos as $photo) {
-             Storage::delete($photo->url);
+            Storage::disk('public')->delete("products/{$photo->url}");
         }
 
         // Hapus relasi sebelum menghapus produk utama
