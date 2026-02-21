@@ -15,7 +15,7 @@
                 <!-- Foto produk yang sudah ada -->
                @foreach ($product->photos as $photo)
                 <div id="photo-{{ $photo->id }}" class="position-relative" style="width: 100px; height: 100px;">
-                    <img src="{{ $photo->full_url }}" loading="lazy" alt="Foto Produk"
+                    <img src="{{ asset('storage/' . $photo->url) }}" alt="Foto Produk"
                         class="img-thumbnail" style="width: 100px; height: 100px;">
                     <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0"
                             onclick="deletePhoto({{ $photo->id }})">x</button>
@@ -116,6 +116,9 @@
 
         <button type="submit" class="btn btn-warning px-5">Update Produk</button>
     </form>
+    <script>
+        const deletePhotoBaseUrl = "{{ route('products.photos.delete', [$product->slug, 'PHOTO_ID']) }}";
+    </script>
     <script src="{{ asset('js/editproduct.js') }}"></script>
 </section>
 
