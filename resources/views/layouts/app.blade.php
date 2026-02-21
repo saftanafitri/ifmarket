@@ -87,15 +87,18 @@
     </main>
 
     <footer class="bg-custom py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <img src="{{ asset('images/Logo_footer.png') }}" alt="UIN SGD" style="width: 180px;">
+        <div class="container-fluid px-0">
+            <div class="row footer-row mx-0">
+                <div class="col-md-5 footer-col">
+                    <img src="{{ asset('images/Logo_footer.png') }}" >
                     <h5>Teknik Informatika</h5>
-                    <p>Universitas Islam Negeri Sunan Gunung Djati Bandung<br>Jalan A.H. Nasution No. 105, Cipadung,
-                        Cibiru, Bandung, Jawa Barat 40614</p>
+                    <p>
+                        Universitas Islam Negeri Sunan Gunung Djati Bandung<br>
+                        Jalan A.H. Nasution No. 105, Cipadung, Cibiru, Bandung, Jawa Barat 40614
+                    </p>
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-4 footer-col">
                     <h5>Layanan Akademik</h5>
                     <ul class="list-unstyled">
                         <li><a href="https://salam.uinsgd.ac.id/">Sistem Informasi Layanan Akademik (SALAM)</a></li>
@@ -105,7 +108,8 @@
                         <li><a href="https://join.if.uinsgd.ac.id/">Jurnal Online Informatika</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-3 footer-col">
                     <h5>Akses Cepat</h5>
                     <ul class="list-unstyled">
                         <li><a href="https://fst.uinsgd.ac.id/">Fakultas Sains dan Teknologi</a></li>
@@ -114,10 +118,14 @@
                         <li><a href="https://pddikti.kemdikbud.go.id/">Pangkalan Data DIKTI Kemdikbud RI</a></li>
                     </ul>
                 </div>
+            </div>  
+            <div class="row mx-0">
+                <div class="col-md-7 footer-col">
+                    <p class="footer-copy">&copy; Created by Rizkco Fauzan Adhim & Saftana Fitri,Supported by Sakti Tech Support</p>
+                </div>
             </div>
-            <p class="text-left mt-3">&copy; Created by Rizkco Fauzan Adhim & Saftana Fitri, Supported by Sakti Tech Support</p>
-        </div>
-    </footer>
+            </div>
+        </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
