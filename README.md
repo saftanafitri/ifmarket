@@ -3,7 +3,7 @@
 copy .env.example .env
 composer install
 composer require laravel/sanctum
-composer require intervention/image
+composer require intervention/image:^2.7
 php artisan vendor:publish --tag=laravel-pagination 
 php artisan key:generate
 php artisan migrate
